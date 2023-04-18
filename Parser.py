@@ -20,9 +20,6 @@ class CoolParser(Parser):
         ('left', "+", "-"),
         ('left', "*", "/"),
         ('left', "ISVOID"),
-        #('left', "~"),
-        #('left', "@"),
-        #('left', "."),
     )
 
     # PROGRAM
@@ -154,7 +151,6 @@ class CoolParser(Parser):
     def exprs_add(self, p):
         return [p.expr]
 
-    #! preguntar si esta bienn que haya 4 y si puede haber espacios en los puntos y el '_no_type_'
     @_('expr "." OBJECTID "(" ")" ')
     def expr(self, p):
         return LlamadaMetodoEstatico(

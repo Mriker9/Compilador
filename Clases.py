@@ -21,6 +21,12 @@ class Ambito:
     def find_simbol(self, variable):
         return self.lista_ambitos[-1][variable]
 
+    #? solo para definiciones de 'cosas' (clases, varaibles, objetos....)
+    def check_scope(self, variable):
+        if variable in self.lista_ambitos[-1]:
+            return True
+        else:
+            return False
 
 @dataclass
 class Nodo:
@@ -41,6 +47,12 @@ class Formal(Nodo):
         resultado += f'{(n+2)*" "}{self.tipo}\n'
         return resultado
 
+    def Tipo(self, Ambito):
+        if Ambito.check_scope(self.nombre_variable):
+            self.cast = Ambito.find_simbol(self.nombre_variable)
+        else:
+            raise Exception("variable fuera de ambito en Formal")
+
 
 class Expresion(Nodo):
     cast: str = '_no_type'
@@ -58,6 +70,12 @@ class Asignacion(Expresion):
         resultado += self.cuerpo.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
+
+    def Tipo(self, Ambito):
+        if Ambito.check_scope(self.nombre):
+            self.cast = Ambito.find_simbol(self.nombre)
+        else:
+            raise Exception("variable fuera de ambito en Asignacion")
 
 
 @dataclass
@@ -91,6 +109,11 @@ class LlamadaMetodo(Expresion):
     nombre_metodo: str = '_no_set'
     argumentos: List[Expresion] = field(default_factory=list)
 
+    Ambito.new_scope()
+    for argumento in argumentos:
+        Ambito.add_simbol(argumento.OBJECTID, argumento.TYPEID)
+    Ambito.end_scope()
+
     def str(self, n):
         resultado = super().str(n)
         resultado += f'{(n)*" "}_dispatch\n'
@@ -102,9 +125,6 @@ class LlamadaMetodo(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-    def Tipo(self, Ambito):
-        self.cuerpo.Tipo(Ambito)
-        #Ambito.
 
 
 
@@ -122,6 +142,17 @@ class Condicional(Expresion):
         resultado += self.falso.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
+
+    def Tipo(self, Ambito):
+        self.condicion.Tipo(Ambito)
+        self.verdadero.Tipo(Ambito)
+        self.falso.Tipo(Ambito)
+
+        #! checkear como se pone el true (y si esta bien, aunque tiene toda la pinta de que lo etste)
+        if self.condicion.cast == 'True':
+            self.cast = Ambito.find_symbol(self.verdadero)
+        else:
+            self.cast = Ambito.find_symbol(self.falso)
 
 
 @dataclass
@@ -232,7 +263,7 @@ class Suma(OperacionBinaria):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
-            self.resultado.Tipo(Ambito)
+            self.cast = 'int'
 
 
 
@@ -248,6 +279,12 @@ class Resta(OperacionBinaria):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Tipo(self, Ambito):
+        self.izquierda.Tipo(Ambito)
+        self.derecha.Tipo(Ambito)
+        if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
+            self.cast = 'int'
+
 
 @dataclass
 class Multiplicacion(OperacionBinaria):
@@ -261,7 +298,11 @@ class Multiplicacion(OperacionBinaria):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-
+    def Tipo(self, Ambito):
+        self.izquierda.Tipo(Ambito)
+        self.derecha.Tipo(Ambito)
+        if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
+            self.cast = 'int'
 
 @dataclass
 class Division(OperacionBinaria):
@@ -274,6 +315,12 @@ class Division(OperacionBinaria):
         resultado += self.derecha.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
+
+    def Tipo(self, Ambito):
+        self.izquierda.Tipo(Ambito)
+        self.derecha.Tipo(Ambito)
+        if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
+            self.cast = 'int'
 
 
 @dataclass
@@ -288,6 +335,12 @@ class Menor(OperacionBinaria):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Tipo(self, Ambito):
+        self.izquierda.Tipo(Ambito)
+        self.derecha.Tipo(Ambito)
+        if self.izquierda.cast == self.derecha.cast:
+            self.cast = 'bool'
+
 @dataclass
 class LeIgual(OperacionBinaria):
     operando: str = '<='
@@ -299,6 +352,14 @@ class LeIgual(OperacionBinaria):
         resultado += self.derecha.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
+
+    def Tipo(self, Ambito):
+        self.izquierda.Tipo(Ambito)
+        self.derecha.Tipo(Ambito)
+        if self.izquierda.cast == self.derecha.cast:
+            self.cast = 'bool'
+        else:
+            raise Exception('operandos con distinto tipo en LeIgual')
 
 
 @dataclass
@@ -312,6 +373,16 @@ class Igual(OperacionBinaria):
         resultado += self.derecha.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
+
+
+    def Tipo(self, Ambito):
+        self.izquierda.Tipo(Ambito)
+        self.derecha.Tipo(Ambito)
+        if self.izquierda.cast == self.derecha.cast:
+            self.cast = 'bool'
+        else:
+            raise Exception('operandos con distinto tipo en Igual')
+
 
 
 
@@ -354,8 +425,10 @@ class EsNulo(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
-        self.expr.Tipo(Ambito)
-        self.cast = 'Bool'
+        if Ambito.check_scope(self.expr):
+            self.cast = Ambito.findSymbol(self.expr)
+        else:
+            raise Exception("variable fuera de ambito")
 
 
 @dataclass
@@ -370,12 +443,10 @@ class Objeto(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
-        if Ambito.checkScope(self.nombre):
+        if Ambito.check_scope(self.nombre):
             self.cast = Ambito.findSymbol(self.nombre)
         else:
-            #! guardar los errores
-            #! Aqui: variable no esta en el ambito
-            self.cast = "Object"
+            raise Exception("variable fuera de ambito")
 
 
 @dataclass

@@ -77,9 +77,12 @@ if True:
             j = parser.parse(lexer.tokenize(entrada))
             try:
                 if j and not parser.errores:
-                    j.tipo()
-                    resultado = '\n'.join([c for c in j.str(0).split('\n')
+                    try:
+                        j.Tipo()
+                        resultado = '\n'.join([c for c in j.str(0).split('\n')
                                            if c and '#' not in c])
+                    except e:
+                        print(e)
                 else:
                     resultado = '\n'.join(parser.errores)
                     resultado += '\n' + "Compilation halted due to lex and parse errors"
