@@ -373,8 +373,8 @@ class Objeto(Expresion):
         if Ambito.checkScope(self.nombre):
             self.cast = Ambito.findSymbol(self.nombre)
         else:
-            # guardar los errores
-            # Aqui: variable no esta en el ambito
+            #! guardar los errores
+            #! Aqui: variable no esta en el ambito
             self.cast = "Object"
 
 
