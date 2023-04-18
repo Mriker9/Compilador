@@ -1,0 +1,22 @@
+(undo-tree-save-format-version . 1)
+"00e04c3a0193c3e2a8e13e77bf26bffdac5a3f42"
+[nil nil nil nil (25579 35198 180817 0) 0 nil]
+([nil nil ((#("p" 0 1 (fontified t)) . -244) (undo-tree-id15 . -1) (#("a" 0 1 (fontified t)) . -245) (undo-tree-id16 . -1) (#("s" 0 1 (fontified t)) . -246) (undo-tree-id17 . -1) (#("s" 0 1 (fontified t face font-lock-keyword-face)) . -247) (undo-tree-id18 . -1) 248 (t 25092 63280 0 0)) nil (25579 35198 180816 0) 0 nil])
+([nil nil ((nil rear-nonsticky nil 342 . 343) (nil fontified nil 320 . 343) (nil fontified nil 319 . 320) (nil fontified nil 301 . 319) (nil fontified nil 295 . 301) (nil fontified nil 281 . 295) (nil fontified nil 277 . 281) (nil fontified nil 276 . 277) (nil fontified nil 269 . 276) (nil fontified nil 268 . 269) (nil fontified nil 265 . 268) (nil fontified nil 259 . 265) (nil fontified nil 251 . 259) (nil fontified nil 250 . 251) (nil fontified nil 248 . 250) (nil fontified nil 244 . 248) (244 . 343)) nil (25579 35198 180813 0) 0 nil])
+([nil nil ((240 . 244) (#("        " 0 4 (fontified t) 4 8 (fontified t)) . 240) (undo-tree-id11 . -4) (undo-tree-id12 . -4) (undo-tree-id13 . -4) (undo-tree-id14 . -4) 260) nil (25579 35198 180811 0) 0 nil])
+([nil nil ((340 . 345)) nil (25579 35198 180809 0) 0 nil])
+([nil nil ((345 . 349)) nil (25579 35198 180808 0) 0 nil])
+([nil nil ((349 . 351)) nil (25579 35198 180808 0) 0 nil])
+([nil nil ((351 . 356)) nil (25579 35198 180808 0) 0 nil])
+([nil nil ((356 . 374)) nil (25579 35198 180807 0) 0 nil])
+([nil nil ((#("p" 0 1 (fontified t)) . -373) (undo-tree-id10 . -1) 374) nil (25579 35198 180806 0) 0 nil])
+([nil nil ((#(" " 0 1 (fontified t)) . 372) (undo-tree-id9 . -1) 373) nil (25579 35198 180805 0) 0 nil])
+([nil nil ((#("f" 0 1 (fontified t)) . -369) (undo-tree-id6 . -1) (#("l" 0 1 (fontified t)) . -370) (undo-tree-id7 . -1) (#("," 0 1 (fontified t)) . -371) (undo-tree-id8 . -1) 372) nil (25579 35198 180804 0) 0 nil])
+([nil nil ((369 . 375)) nil (25579 35198 180802 0) 0 nil])
+([nil nil ((375 . 376)) nil (25579 35198 180801 0) 0 nil])
+([nil nil ((#("return Programa(linea = 0, secuencia = p.clases)" 0 6 (fontified t face font-lock-keyword-face) 6 24 (fontified t) 24 25 (fontified t face py-number-face) 25 47 (fontified t) 47 48 (rear-nonsticky t fontified t)) . -291) (undo-tree-id0 . -48) (undo-tree-id1 . -48) (undo-tree-id2 . 1) (undo-tree-id3 . -48) (undo-tree-id4 . 33) (undo-tree-id5 . -16) 339) nil (25579 35198 180800 0) 0 nil])
+([nil nil ((291 . 295)) nil (25579 35198 180789 0) 0 nil])
+([nil nil ((332 . 341)) nil (25579 35198 180788 0) 0 nil])
+([nil nil ((341 . 345)) nil (25579 35198 180788 0) 0 nil])
+([nil current ((345 . 346)) nil (25579 35198 180785 0) 0 nil])
+nil

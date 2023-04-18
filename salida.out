@@ -1,0 +1,90 @@
+Grammar:
+
+Rule 0     S' -> program
+Rule 1     program -> clases
+Rule 2     clases -> <empty>
+
+Unused terminals:
+
+    INT_CONST
+    ASSIGN
+    CASE
+    NUMBER
+    LOOP
+    LET
+    INHERITS
+    IN
+    WHILE
+    LE
+    OF
+    CLASS
+    ELSE
+    IF
+    ISVOID
+    BOOL_CONST
+    NOT
+    STR_CONST
+    OBJECTID
+    POOL
+    THEN
+    DARROW
+    NEW
+    TYPEID
+    ESAC
+    FI
+
+Terminals, with rules where they appear:
+
+ASSIGN               : 
+BOOL_CONST           : 
+CASE                 : 
+CLASS                : 
+DARROW               : 
+ELSE                 : 
+ESAC                 : 
+FI                   : 
+IF                   : 
+IN                   : 
+INHERITS             : 
+INT_CONST            : 
+ISVOID               : 
+LE                   : 
+LET                  : 
+LOOP                 : 
+NEW                  : 
+NOT                  : 
+NUMBER               : 
+OBJECTID             : 
+OF                   : 
+POOL                 : 
+STR_CONST            : 
+THEN                 : 
+TYPEID               : 
+WHILE                : 
+error                : 
+
+Nonterminals, with rules where they appear:
+
+clases               : 1
+program              : 0
+
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . clases
+    (2) clases -> .
+    $end            reduce using rule 2 (clases -> .)
+
+    program                        shift and go to state 1
+    clases                         shift and go to state 2
+
+state 1
+
+    (0) S' -> program .
+
+
+state 2
+
+    (1) program -> clases .
+    $end            reduce using rule 1 (program -> clases .)

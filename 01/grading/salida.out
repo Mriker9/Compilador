@@ -1,0 +1,144 @@
+Grammar:
+
+Rule 0     S' -> program
+Rule 1     program -> clases
+Rule 2     clases -> clase clases
+Rule 3     clases -> clase
+Rule 4     clases -> <empty>
+Rule 5     clase -> CLASS TYPEID
+
+Unused terminals:
+
+    IN
+    ELSE
+    INHERITS
+    CMT_CONST
+    ISVOID
+    ASSIGN
+    WHILE
+    DARROW
+    CASE
+    OBJECTID
+    NEW
+    LOOP
+    NOT
+    STR_CONST
+    ESAC
+    FI
+    ERROR
+    LE
+    BOOL_CONST
+    NUMBER
+    POOL
+    THEN
+    LET
+    CMT_CONST1
+    OF
+    INT_CONST
+    IF
+
+Terminals, with rules where they appear:
+
+ASSIGN               : 
+BOOL_CONST           : 
+CASE                 : 
+CLASS                : 5
+CMT_CONST            : 
+CMT_CONST1           : 
+DARROW               : 
+ELSE                 : 
+ERROR                : 
+ESAC                 : 
+FI                   : 
+IF                   : 
+IN                   : 
+INHERITS             : 
+INT_CONST            : 
+ISVOID               : 
+LE                   : 
+LET                  : 
+LOOP                 : 
+NEW                  : 
+NOT                  : 
+NUMBER               : 
+OBJECTID             : 
+OF                   : 
+POOL                 : 
+STR_CONST            : 
+THEN                 : 
+TYPEID               : 5
+WHILE                : 
+error                : 
+
+Nonterminals, with rules where they appear:
+
+clase                : 2 3
+clases               : 1 2
+program              : 0
+
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . clases
+    (2) clases -> . clase clases
+    (3) clases -> . clase
+    (4) clases -> .
+    (5) clase -> . CLASS TYPEID
+    $end            reduce using rule 4 (clases -> .)
+    CLASS           shift and go to state 4
+
+    program                        shift and go to state 1
+    clases                         shift and go to state 2
+    clase                          shift and go to state 3
+
+state 1
+
+    (0) S' -> program .
+
+
+state 2
+
+    (1) program -> clases .
+    $end            reduce using rule 1 (program -> clases .)
+
+
+state 3
+
+    (2) clases -> clase . clases
+    (3) clases -> clase .
+    (2) clases -> . clase clases
+    (3) clases -> . clase
+    (4) clases -> .
+    (5) clase -> . CLASS TYPEID
+  ! reduce/reduce conflict for $end resolved using rule 4 (clases -> .)
+    $end            reduce using rule 4 (clases -> .)
+    CLASS           shift and go to state 4
+
+    clase                          shift and go to state 3
+    clases                         shift and go to state 5
+
+state 4
+
+    (5) clase -> CLASS . TYPEID
+    TYPEID          shift and go to state 6
+
+
+state 5
+
+    (2) clases -> clase clases .
+    $end            reduce using rule 2 (clases -> clase clases .)
+
+
+state 6
+
+    (5) clase -> CLASS TYPEID .
+    CLASS           reduce using rule 5 (clase -> CLASS TYPEID .)
+    $end            reduce using rule 5 (clase -> CLASS TYPEID .)
+
+
+Conflicts:
+
+reduce/reduce conflict in state 3 resolved using rule clases -> <empty>
+rejected rule (clases -> clase) in state 3
+Rule (clases -> clase) is never reduced
