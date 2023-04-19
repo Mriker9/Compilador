@@ -398,6 +398,8 @@ class Neg(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Tipo(self, Ambito):
+        self.cast = self.expr.cast
 
 
 @dataclass
