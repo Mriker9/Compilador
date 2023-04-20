@@ -48,10 +48,7 @@ class Formal(Nodo):
         return resultado
 
     def Tipo(self, Ambito):
-        if Ambito.check_scope(self.nombre_variable):
-            self.cast = Ambito.find_simbol(self.nombre_variable)
-        else:
-            raise Exception("variable fuera de ambito en Formal")
+        self.cast = self.tipo
 
 
 class Expresion(Nodo):
@@ -72,12 +69,10 @@ class Asignacion(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
-        if Ambito.check_scope(self.nombre):
-            self.cast = Ambito.find_simbol(self.nombre)
-        else:
-            raise Exception("variable fuera de ambito en Asignacion")
+        self.cast = self.cuerpo.cast
 
 
+#estas las puedes llamar desde un objeto
 @dataclass
 class LlamadaMetodoEstatico(Expresion):
     cuerpo: Expresion = None
@@ -101,6 +96,10 @@ class LlamadaMetodoEstatico(Expresion):
         resultado += f'{(n+2)*" "})\n'
         resultado += f'{(n)*" "}: _no_type\n'
         return resultado
+
+    def Tipo(self, Ambito):
+        #TODO es algo con clase pero no se muy bien como
+        pass
 
 
 @dataclass
@@ -148,7 +147,7 @@ class Condicional(Expresion):
         self.verdadero.Tipo(Ambito)
         self.falso.Tipo(Ambito)
 
-        #! checkear como se pone el true (y si esta bien, aunque tiene toda la pinta de que lo etste)
+        #TODO checkear como se pone el true (y si esta bien, aunque tiene toda la pinta de que lo etste)
         if self.condicion.cast == 'True':
             self.cast = Ambito.find_symbol(self.verdadero)
         else:
@@ -167,6 +166,7 @@ class Bucle(Expresion):
         resultado += self.cuerpo.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
+    #TODO no se si tiene tipo
 
 
 @dataclass
@@ -186,6 +186,10 @@ class Let(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    #? No se si esto esta bien
+    def Tipo(self, Ambito):
+        self.cast = self.tipo
+
 
 @dataclass
 class Bloque(Expresion):
@@ -198,6 +202,7 @@ class Bloque(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         resultado += '\n'
         return resultado
+    #TODO no se si tiene tipo, porque es un bloque de expresiones
 
 
 @dataclass
@@ -215,6 +220,10 @@ class RamaCase(Nodo):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    #? No se si esto esta bien
+    def Tipo(self, Ambito):
+        self.cast = self.tipo
+
 
 @dataclass
 class Swicht(Nodo):
@@ -228,6 +237,7 @@ class Swicht(Nodo):
         resultado += ''.join([c.str(n+2) for c in self.casos])
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
+    #TODO creo que no tiene tipo
 
 @dataclass
 class Nueva(Nodo):
@@ -238,6 +248,10 @@ class Nueva(Nodo):
         resultado += f'{(n+2)*" "}{self.tipo}\n'
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
+
+    #? No se si esto esta bien
+    def Tipo(self, Ambito):
+        self.cast = self.tipo
 
 
 
@@ -264,6 +278,9 @@ class Suma(OperacionBinaria):
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
             self.cast = 'int'
+        else:
+            raise Exception('operandos con distinto tipo en Suma')
+
 
 
 
@@ -284,6 +301,8 @@ class Resta(OperacionBinaria):
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
             self.cast = 'int'
+        else:
+            raise Exception('operandos con distinto tipo en Resta')
 
 
 @dataclass
@@ -303,6 +322,8 @@ class Multiplicacion(OperacionBinaria):
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
             self.cast = 'int'
+        else:
+            raise Exception('operandos con distinto tipo en Multiplicacion')
 
 @dataclass
 class Division(OperacionBinaria):
@@ -321,6 +342,8 @@ class Division(OperacionBinaria):
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
             self.cast = 'int'
+        else:
+            raise Exception('operandos con distinto tipo en Division')
 
 
 @dataclass
@@ -340,6 +363,8 @@ class Menor(OperacionBinaria):
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast:
             self.cast = 'bool'
+        else:
+            raise Exception('operandos con distinto tipo en Menor')
 
 @dataclass
 class LeIgual(OperacionBinaria):
@@ -414,6 +439,9 @@ class Not(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Tipo(self, Ambito):
+        self.cast = self.expr.cast
+
 
 @dataclass
 class EsNulo(Expresion):
@@ -427,10 +455,7 @@ class EsNulo(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
-        if Ambito.check_scope(self.expr):
-            self.cast = Ambito.findSymbol(self.expr)
-        else:
-            raise Exception("variable fuera de ambito")
+        self.cast = self.expr.cast
 
 
 @dataclass
@@ -443,12 +468,9 @@ class Objeto(Expresion):
         resultado += f'{(n+2)*" "}{self.nombre}\n'
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
-
+    #TODO no se si tiene nipo
     def Tipo(self, Ambito):
-        if Ambito.check_scope(self.nombre):
-            self.cast = Ambito.findSymbol(self.nombre)
-        else:
-            raise Exception("variable fuera de ambito")
+        pass
 
 
 @dataclass
@@ -502,10 +524,15 @@ class Booleano(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Tipo(self, Ambito):
+        self.cast = "BOOL"
+
 @dataclass
 class IterableNodo(Nodo):
     secuencia: List = field(default_factory=List)
 
+#TODO de aqui en adelante no se muy bien como hacer lo de los tipos
+#TODO ademas tendremos que hacer algo asi como lo de abrir scope o algo asi
 
 class Programa(IterableNodo):
     def str(self, n):
