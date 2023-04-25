@@ -97,9 +97,9 @@ class LlamadaMetodoEstatico(Expresion):
         resultado += f'{(n)*" "}: _no_type\n'
         return resultado
 
+    #TODO preguntar si esta bien
     def Tipo(self, Ambito):
-        #TODO es algo con clase pero no se muy bien como
-        pass
+        self.cast = self.clase
 
 
 @dataclass
@@ -186,7 +186,7 @@ class Let(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-    #? No se si esto esta bien
+    #TODO No se si esto esta bien
     def Tipo(self, Ambito):
         self.cast = self.tipo
 
@@ -220,7 +220,7 @@ class RamaCase(Nodo):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-    #? No se si esto esta bien
+    #TODO No se si esto esta bien
     def Tipo(self, Ambito):
         self.cast = self.tipo
 
@@ -249,7 +249,7 @@ class Nueva(Nodo):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-    #? No se si esto esta bien
+    #TODO No se si esto esta bien
     def Tipo(self, Ambito):
         self.cast = self.tipo
 
@@ -468,7 +468,7 @@ class Objeto(Expresion):
         resultado += f'{(n+2)*" "}{self.nombre}\n'
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
-    #TODO no se si tiene nipo
+    #TODO no se si tiene tipo
     def Tipo(self, Ambito):
         pass
 
