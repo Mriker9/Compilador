@@ -159,6 +159,8 @@ class Bucle(Expresion):
     condicion: Expresion = None
     cuerpo: Expresion = None
 
+    #TODO preguntar si hace falta abrir un scope
+
     def str(self, n):
         resultado = super().str(n)
         resultado += f'{(n)*" "}_loop\n'
@@ -194,6 +196,12 @@ class Let(Expresion):
 @dataclass
 class Bloque(Expresion):
     expresiones: List[Expresion] = field(default_factory=list)
+
+    #TODO entendemos que esta bien
+    Ambito.new_scope()
+    for expr in expresiones:
+        Ambito.add_simbol(expr.OBJECTID, expr.TYPEID)
+    Ambito.end_scope()
 
     def str(self, n):
         resultado = super().str(n)
@@ -552,6 +560,9 @@ class Caracteristica(Nodo):
     tipo: str = '_no_set'
     cuerpo: Expresion = None
 
+    def Tipo(self, Ambito):
+        self.cast = self.tipo
+
 
 @dataclass
 class Clase(Nodo):
@@ -559,6 +570,13 @@ class Clase(Nodo):
     padre: str = '_no_set'
     nombre_fichero: str = '_no_set'
     caracteristicas: List[Caracteristica] = field(default_factory=list)
+
+    #TODO preguntar si esta bien
+    #TODO puede ser caracteristica.cast
+    Ambito.new_scope()
+    for caracteristica in caracteristicas:
+        Ambito.add_simbol(caracteristica.OBJECTID, caracteristica.TYPEID)
+    Ambito.end_scope()
 
     def str(self, n):
         resultado = super().str(n)
@@ -572,12 +590,19 @@ class Clase(Nodo):
         resultado += f'{(n+2)*" "})\n'
         return resultado
 
+    #TODO chequear
     def Tipo(self, Ambito):
-        pass
+        self.cast = self.nombre
 
 @dataclass
 class Metodo(Caracteristica):
     formales: List[Formal] = field(default_factory=list)
+
+    #TODO chequear por que tambien se abre scoope en llamadametodo
+    Ambito.new_scope()
+    for formal in formales:
+        Ambito.add_simbol(formal.OBJECTID, formal.TYPEID)
+    Ambito.end_scope()
 
     def str(self, n):
         resultado = super().str(n)
