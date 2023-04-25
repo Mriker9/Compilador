@@ -5,6 +5,7 @@ from typing import List
 
 class Ambito:
     lista_ambitos = [dict()]
+    var = True
 
     def new_scope(self):
         if len(self.lista_ambitos) == 0:
@@ -24,6 +25,34 @@ class Ambito:
     #? solo para definiciones de 'cosas' (clases, varaibles, objetos....)
     def check_scope(self, variable):
         if variable in self.lista_ambitos[-1]:
+            return True
+        else:
+            return False
+
+    def mca(self, A, B):
+        if A == B:
+            return A
+        elif self.es_hijo(A, B):
+            return B
+        elif self.es_hijo(B, A):
+            return A
+        else:
+            if self.var and A != Objeto:
+                self.var = False
+                self.mca(self.padre(A), B)
+            elif not self.var and B != Objeto:
+                self.var = True
+                self.mca(A, self.padre(B))
+            elif A == Objeto:
+                self.mca(A, self.padre(B))
+            else:
+                self.mca((self.padre(A), B))
+
+    def padre(self, A):
+        return A.padre
+
+    def es_hijo(self, A, B):
+        if self.padre(A) == B:
             return True
         else:
             return False
@@ -72,7 +101,7 @@ class Asignacion(Expresion):
         self.cast = self.cuerpo.cast
 
 
-#estas las puedes llamar desde un objeto
+#TODO comprobar que los tipos de la llamada coinciden con los tipos que te pide la definicion del metodo
 @dataclass
 class LlamadaMetodoEstatico(Expresion):
     cuerpo: Expresion = None
@@ -80,10 +109,6 @@ class LlamadaMetodoEstatico(Expresion):
     nombre_metodo: str = '_no_set'
     argumentos: List[Expresion] = field(default_factory=list)
 
-    Ambito.new_scope()
-    for argumento in argumentos:
-        Ambito.add_simbol(argumento.OBJECTID, argumento.TYPEID)
-    Ambito.end_scope()
 
     def str(self, n):
         resultado = super().str(n)
@@ -99,7 +124,15 @@ class LlamadaMetodoEstatico(Expresion):
 
     #TODO preguntar si esta bien
     def Tipo(self, Ambito):
-        self.cast = self.clase
+        Ambito.new_scope()
+        for argumento in self.argumentos:
+            Ambito.add_simbol(argumento.OBJECTID, argumento.TYPEID)
+        Ambito.end_scope()
+
+        if self.cuerpo.cast == self.clase:
+            self.cast = self.cuerpo.cast
+        else:
+            raise Exception('llamadaMetodoEstatico devuelve mal tipo')
 
 
 @dataclass
@@ -107,11 +140,6 @@ class LlamadaMetodo(Expresion):
     cuerpo: Expresion = None
     nombre_metodo: str = '_no_set'
     argumentos: List[Expresion] = field(default_factory=list)
-
-    Ambito.new_scope()
-    for argumento in argumentos:
-        Ambito.add_simbol(argumento.OBJECTID, argumento.TYPEID)
-    Ambito.end_scope()
 
     def str(self, n):
         resultado = super().str(n)
@@ -124,7 +152,9 @@ class LlamadaMetodo(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-
+    #TODO
+    def Tipo(self, Ambito):
+        self.cast = self.cuerpo.cast
 
 
 @dataclass
@@ -147,7 +177,7 @@ class Condicional(Expresion):
         self.verdadero.Tipo(Ambito)
         self.falso.Tipo(Ambito)
 
-        #TODO checkear como se pone el true (y si esta bien, aunque tiene toda la pinta de que lo etste)
+        #TODO checkear como se pone el true
         if self.condicion.cast == 'True':
             self.cast = Ambito.find_symbol(self.verdadero)
         else:
@@ -159,8 +189,6 @@ class Bucle(Expresion):
     condicion: Expresion = None
     cuerpo: Expresion = None
 
-    #TODO preguntar si hace falta abrir un scope
-
     def str(self, n):
         resultado = super().str(n)
         resultado += f'{(n)*" "}_loop\n'
@@ -168,7 +196,9 @@ class Bucle(Expresion):
         resultado += self.cuerpo.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
-    #TODO no se si tiene tipo
+
+    def Tipo(self, Ambito):
+        self.cast = self.cuerpo.cast
 
 
 @dataclass
@@ -190,18 +220,19 @@ class Let(Expresion):
 
     #TODO No se si esto esta bien
     def Tipo(self, Ambito):
-        self.cast = self.tipo
+        Ambito.new_scope()
+        Ambito.add_simbol(self.nombre, self.tipo)
+        Ambito.end_scope()
+
+        if self.cuerpo.cast == self.tipo:
+            self.cast = self.tipo
+        else:
+            raise Exception('let con mal tipo')
 
 
 @dataclass
 class Bloque(Expresion):
     expresiones: List[Expresion] = field(default_factory=list)
-
-    #TODO entendemos que esta bien
-    Ambito.new_scope()
-    for expr in expresiones:
-        Ambito.add_simbol(expr.OBJECTID, expr.TYPEID)
-    Ambito.end_scope()
 
     def str(self, n):
         resultado = super().str(n)
@@ -210,7 +241,10 @@ class Bloque(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         resultado += '\n'
         return resultado
-    #TODO no se si tiene tipo, porque es un bloque de expresiones
+
+    #TODO hay que checkear los tipos
+    def Tipo(self, Ambito):
+        self.cast = self.expresiones[-1].cast
 
 
 @dataclass
@@ -416,9 +450,6 @@ class Igual(OperacionBinaria):
         else:
             raise Exception('operandos con distinto tipo en Igual')
 
-
-
-
 @dataclass
 class Neg(Expresion):
     expr: Expresion = None
@@ -476,10 +507,9 @@ class Objeto(Expresion):
         resultado += f'{(n+2)*" "}{self.nombre}\n'
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
-    #TODO no se si tiene tipo
-    def Tipo(self, Ambito):
-        pass
 
+    def Tipo(self, Ambito):
+        self.cast = Ambito.find_simbol(self.nombre)
 
 @dataclass
 class NoExpr(Expresion):
@@ -539,7 +569,6 @@ class Booleano(Expresion):
 class IterableNodo(Nodo):
     secuencia: List = field(default_factory=List)
 
-#TODO de aqui en adelante no se muy bien como hacer lo de los tipos
 #TODO ademas tendremos que hacer algo asi como lo de abrir scope o algo asi
 
 class Programa(IterableNodo):
@@ -551,6 +580,11 @@ class Programa(IterableNodo):
 
     def tipo(self):
         ambito = Ambito()
+        for clase in self.secuencia:
+            ambito.add_class(clase.nombre, clase.padre)
+            for caracteristica in clase.caracteristicas:
+                if isinstance(caracteristica, Metodo):
+                    pass
         for clase in self.secuencia:
             clase.tipo(ambito)
 
@@ -571,13 +605,6 @@ class Clase(Nodo):
     nombre_fichero: str = '_no_set'
     caracteristicas: List[Caracteristica] = field(default_factory=list)
 
-    #TODO preguntar si esta bien
-    #TODO puede ser caracteristica.cast
-    Ambito.new_scope()
-    for caracteristica in caracteristicas:
-        Ambito.add_simbol(caracteristica.OBJECTID, caracteristica.TYPEID)
-    Ambito.end_scope()
-
     def str(self, n):
         resultado = super().str(n)
         resultado += f'{(n)*" "}_class\n'
@@ -591,18 +618,17 @@ class Clase(Nodo):
         return resultado
 
     #TODO chequear
+    #TODO puede ser caracteristica.cast
     def Tipo(self, Ambito):
+        Ambito.new_scope()
+        for caracteristica in self.caracteristicas:
+            Ambito.add_simbol(caracteristica.OBJECTID, caracteristica.TYPEID)
+        Ambito.end_scope()
         self.cast = self.nombre
 
 @dataclass
 class Metodo(Caracteristica):
     formales: List[Formal] = field(default_factory=list)
-
-    #TODO chequear por que tambien se abre scoope en llamadametodo
-    Ambito.new_scope()
-    for formal in formales:
-        Ambito.add_simbol(formal.OBJECTID, formal.TYPEID)
-    Ambito.end_scope()
 
     def str(self, n):
         resultado = super().str(n)
@@ -611,8 +637,16 @@ class Metodo(Caracteristica):
         resultado += ''.join([c.str(n+2) for c in self.formales])
         resultado += f'{(n + 2) * " "}{self.tipo}\n'
         resultado += self.cuerpo.str(n+2)
-
         return resultado
+
+    def Tipo(self, Ambito):
+        Ambito.new_scope()
+        for formal in self.formales:
+            Ambito.add_simbol(formal.OBJECTID, formal.TYPEID)
+        self.cuerpo.Tipo(Ambito)
+        if not Ambito.eshijo(self.tipo, self.cuerpo.cast):
+            raise Exception('error de tipos en Metodo')
+        Ambito.end_scope()
 
 
 class Atributo(Caracteristica):
