@@ -5,6 +5,8 @@ from typing import List
 
 class Ambito:
     lista_ambitos = [dict()]
+    lista_attr = [dict()]
+    lista_meth = [dict()]
     var = True
 
     def new_scope(self):
@@ -21,6 +23,12 @@ class Ambito:
 
     def find_simbol(self, variable):
         return self.lista_ambitos[-1][variable]
+
+    def add_method(self, nombre_carcateristica, nombre_clase, formales, tipo):
+        self.lista_meth[nombre_carcateristica] = (nombre_clase, tipo)
+
+    def add_attr(self, nombre_carcateristica, nombre_clase, tipo):
+        self.lista_attr[nombre_carcateristica] = (nombre_clase, tipo)
 
     #? solo para definiciones de 'cosas' (clases, varaibles, objetos....)
     def check_scope(self, variable):
@@ -124,10 +132,6 @@ class LlamadaMetodoEstatico(Expresion):
 
     #TODO preguntar si esta bien
     def Tipo(self, Ambito):
-        Ambito.new_scope()
-        for argumento in self.argumentos:
-            Ambito.add_simbol(argumento.OBJECTID, argumento.TYPEID)
-        Ambito.end_scope()
 
         if self.cuerpo.cast == self.clase:
             self.cast = self.cuerpo.cast
@@ -177,7 +181,7 @@ class Condicional(Expresion):
         self.verdadero.Tipo(Ambito)
         self.falso.Tipo(Ambito)
 
-        #TODO checkear como se pone el true
+        #TODO hay que cambiarlo entero para que dependa del arbol y termine devolviendo object
         if self.condicion.cast == 'True':
             self.cast = Ambito.find_symbol(self.verdadero)
         else:
@@ -294,8 +298,6 @@ class Nueva(Nodo):
     #TODO No se si esto esta bien
     def Tipo(self, Ambito):
         self.cast = self.tipo
-
-
 
 @dataclass
 class OperacionBinaria(Expresion):
@@ -584,7 +586,10 @@ class Programa(IterableNodo):
             ambito.add_class(clase.nombre, clase.padre)
             for caracteristica in clase.caracteristicas:
                 if isinstance(caracteristica, Metodo):
-                    pass
+                    ambito.add_method(caracteristica.nombre, clase.nombre, caracteristica.formales, caracteristica.tipo)
+                else:
+                    ambito.add_attr(caracteristica.nombre, clase.nombre, caracteristica.tipo)
+
         for clase in self.secuencia:
             clase.tipo(ambito)
 
@@ -613,6 +618,15 @@ class Clase(Nodo):
         resultado += f'{(n+2)*" "}"{self.nombre_fichero}"\n'
         resultado += f'{(n+2)*" "}(\n'
         resultado += ''.join([c.str(n+2) for c in self.caracteristicas])
+        resultado += '\n'
+        resultado += f'{(n+2)*" "})\n'
+        return resultado
+
+    #TODO practica 4, es ir haciendo esto y se pone con es en python
+    #TODO es como ir traduciendo
+    def codigo(self, n):
+        resultado += f'{(n) * " "} class {self.nombre}({self.padre}):\n'
+        resultado += '\t'.join([c.str(n+2) for c in self.caracteristicas])
         resultado += '\n'
         resultado += f'{(n+2)*" "})\n'
         return resultado
