@@ -81,7 +81,7 @@ if True:
                         j.Tipo()
                         resultado = '\n'.join([c for c in j.str(0).split('\n')
                                            if c and '#' not in c])
-                    except e:
+                    except Exception as e:
                         print(e)
                 else:
                     resultado = '\n'.join(parser.errores)

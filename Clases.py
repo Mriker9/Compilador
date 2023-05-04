@@ -2,73 +2,81 @@
 from dataclasses import dataclass, field
 from typing import List
 
+#TODO como hacer bien el stack(ejemplo en Objeto linea 520)
+#TODO mirar Programa, Clase y metodo
+#TODO mirar los fallos de ejecución
+#TODO mirar expresion y si cuerpo.Tipo(Ambito) esta bien
+#TODO checkear condicional
+#TODO mirar si el switch tiene tipo
+#TODO tipo de objeto y noExpr
 
 class Ambito:
-    lista_ambitos = [dict()]
-    lista_attr = [dict()]
-    lista_meth = [dict()]
+    stack = [dict()]
+    lista_pdr = dict()
+    lista_attr = dict()
+    lista_meth = dict()
     var = True
 
     def new_scope(self):
-        if len(self.lista_ambitos) == 0:
-            pass
-        else:
-            self.lista_ambitos.append([dict(self.lista_ambitos[-1])])
+        self.stack.append(dict())
 
     def end_scope(self):
-        self.lista_ambitos.pop()
+        self.stack.pop()
+
+    def check_scope(self, variable):
+        if variable in self.stack[-1]:
+            return True
+        else:
+            return False
 
     def add_simbol(self, variable, tipo):
-        self.lista_ambitos[-1][variable] = tipo
+        self.stack[-1][variable] = tipo
 
     def find_simbol(self, variable):
-        return self.lista_ambitos[-1][variable]
+        return self.stack[-1][variable]
 
-    def add_method(self, nombre_carcateristica, nombre_clase, formales, tipo):
-        self.lista_meth[nombre_carcateristica] = (nombre_clase, tipo)
+    def add_padre(self, clase, padre):
+        self.lista_pdr[clase] = padre
 
-    def add_attr(self, nombre_carcateristica, nombre_clase, tipo):
-        self.lista_attr[nombre_carcateristica] = (nombre_clase, tipo)
+    def get_padre(self, clase):
+        return self.lista_pdr[clase]
 
-    #? solo para definiciones de 'cosas' (clases, varaibles, objetos....)
-    def check_scope(self, variable):
-        if variable in self.lista_ambitos[-1]:
+    def add_method(self, clase, metodo, formales, tipo):
+        self.lista_meth[(clase, metodo)] = [formales, tipo]
+
+    def get_method(self, clase, metodo):
+        return self.lista_meth[(clase, metodo)]
+
+    def add_attr(self, clase, attr, tipo):
+        self.lista_attr[(clase, attr)] = tipo
+
+    def get_attr(self, clase, attr):
+        return self.lista_attr[(clase, attr)]
+
+    def es_subtipo(self, A, B):
+        if A == B:
             return True
-        else:
+        elif A == 'Object':
             return False
+        else:
+            return self.es_subtipo(self.get_padre(A), B)
 
     def mca(self, A, B):
+        if 'Object' in [A, B]:
+            return 'Object'
         if A == B:
             return A
-        elif self.es_hijo(A, B):
+        elif self.es_subtipo(A, B):
             return B
-        elif self.es_hijo(B, A):
+        elif self.es_subtipo(B, A):
             return A
         else:
-            if self.var and A != Objeto:
-                self.var = False
-                self.mca(self.padre(A), B)
-            elif not self.var and B != Objeto:
-                self.var = True
-                self.mca(A, self.padre(B))
-            elif A == Objeto:
-                self.mca(A, self.padre(B))
-            else:
-                self.mca((self.padre(A), B))
+            return self.mca(self.get_padre(A), self.get_padre(B))
 
-    def padre(self, A):
-        return A.padre
-
-    def es_hijo(self, A, B):
-        if self.padre(A) == B:
-            return True
-        else:
-            return False
 
 @dataclass
 class Nodo:
     linea: int = 0
-
     def str(self, n):
         return f'{n*" "}#{self.linea}\n'
 
@@ -106,10 +114,10 @@ class Asignacion(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
+        self.cuerpo.Tipo(Ambito)
         self.cast = self.cuerpo.cast
 
 
-#TODO comprobar que los tipos de la llamada coinciden con los tipos que te pide la definicion del metodo
 @dataclass
 class LlamadaMetodoEstatico(Expresion):
     cuerpo: Expresion = None
@@ -130,13 +138,18 @@ class LlamadaMetodoEstatico(Expresion):
         resultado += f'{(n)*" "}: _no_type\n'
         return resultado
 
-    #TODO preguntar si esta bien
     def Tipo(self, Ambito):
+        self.cuerpo.Tipo(Ambito)
+        formales, tipo = Ambito.get_method(self.cuerpo.cast, self.nombre_metodo)
+        for f, a in zip(formales, self.argumentos):
+            a.Tipo(Ambito)
+            if not Ambito.es_subtipo(a.cast, f.tipo):
+                raise Exception('llamadametodoestatico con argumentos de mal tipo')
 
-        if self.cuerpo.cast == self.clase:
-            self.cast = self.cuerpo.cast
+        if tipo != self.clase:
+            raise Exception('llamadametodoestatico con mal tipo')
         else:
-            raise Exception('llamadaMetodoEstatico devuelve mal tipo')
+            self.cast = tipo
 
 
 @dataclass
@@ -156,9 +169,15 @@ class LlamadaMetodo(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-    #TODO
     def Tipo(self, Ambito):
-        self.cast = self.cuerpo.cast
+        self.cuerpo.Tipo(Ambito)
+        formales, tipo = Ambito.get_method(self.cuerpo.cast, self.nombre_metodo)
+        for f, a in zip(formales, self.argumentos):
+            a.Tipo(Ambito)
+            if not Ambito.es_subtipo(a.cast, f.tipo):
+                raise Exception('llamaMetodo con argumentos con mal tipo')
+
+        self.cast = tipo
 
 
 @dataclass
@@ -181,11 +200,10 @@ class Condicional(Expresion):
         self.verdadero.Tipo(Ambito)
         self.falso.Tipo(Ambito)
 
-        #TODO hay que cambiarlo entero para que dependa del arbol y termine devolviendo object
-        if self.condicion.cast == 'True':
-            self.cast = Ambito.find_symbol(self.verdadero)
-        else:
-            self.cast = Ambito.find_symbol(self.falso)
+        if self.condicion.cast != 'BOOL':
+            raise Exception('condición mal tipo')
+
+        self.cast = Ambito.mca(self.verdadero.cast, self.falso.cast)
 
 
 @dataclass
@@ -202,6 +220,7 @@ class Bucle(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
+        self.cuerpo.Tipo(Ambito)
         self.cast = self.cuerpo.cast
 
 
@@ -222,12 +241,12 @@ class Let(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-    #TODO No se si esto esta bien
     def Tipo(self, Ambito):
         Ambito.new_scope()
         Ambito.add_simbol(self.nombre, self.tipo)
         Ambito.end_scope()
 
+        self.cuerpo.Tipo(Ambito)
         if self.cuerpo.cast == self.tipo:
             self.cast = self.tipo
         else:
@@ -246,8 +265,8 @@ class Bloque(Expresion):
         resultado += '\n'
         return resultado
 
-    #TODO hay que checkear los tipos
     def Tipo(self, Ambito):
+        self.expresiones[-1].Tipo(Ambito)
         self.cast = self.expresiones[-1].cast
 
 
@@ -266,9 +285,12 @@ class RamaCase(Nodo):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-    #TODO No se si esto esta bien
     def Tipo(self, Ambito):
-        self.cast = self.tipo
+        self.cuerpo.Tipo(Ambito)
+        if self.tipo == self.cuerpo.cast:
+            self.cast = self.tipo
+        else:
+            raise Exception('mal tipo en ramacase')
 
 
 @dataclass
@@ -283,7 +305,6 @@ class Swicht(Nodo):
         resultado += ''.join([c.str(n+2) for c in self.casos])
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
-    #TODO creo que no tiene tipo
 
 @dataclass
 class Nueva(Nodo):
@@ -295,7 +316,6 @@ class Nueva(Nodo):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-    #TODO No se si esto esta bien
     def Tipo(self, Ambito):
         self.cast = self.tipo
 
@@ -320,12 +340,10 @@ class Suma(OperacionBinaria):
     def Tipo(self, Ambito):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
-        if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
-            self.cast = 'int'
+        if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'INT_CONST':
+            self.cast = 'INT_CONST'
         else:
             raise Exception('operandos con distinto tipo en Suma')
-
-
 
 
 @dataclass
@@ -343,8 +361,8 @@ class Resta(OperacionBinaria):
     def Tipo(self, Ambito):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
-        if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
-            self.cast = 'int'
+        if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'INT_CONST':
+            self.cast = 'INT_CONST'
         else:
             raise Exception('operandos con distinto tipo en Resta')
 
@@ -364,10 +382,11 @@ class Multiplicacion(OperacionBinaria):
     def Tipo(self, Ambito):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
-        if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
-            self.cast = 'int'
+        if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'INT_CONST':
+            self.cast = 'INT_CONST'
         else:
             raise Exception('operandos con distinto tipo en Multiplicacion')
+
 
 @dataclass
 class Division(OperacionBinaria):
@@ -384,8 +403,8 @@ class Division(OperacionBinaria):
     def Tipo(self, Ambito):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
-        if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'int':
-            self.cast = 'int'
+        if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'INT_CONST':
+            self.cast = 'INT_CONST'
         else:
             raise Exception('operandos con distinto tipo en Division')
 
@@ -406,7 +425,7 @@ class Menor(OperacionBinaria):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast:
-            self.cast = 'bool'
+            self.cast = 'BOOL'
         else:
             raise Exception('operandos con distinto tipo en Menor')
 
@@ -426,7 +445,7 @@ class LeIgual(OperacionBinaria):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast:
-            self.cast = 'bool'
+            self.cast = 'BOOL'
         else:
             raise Exception('operandos con distinto tipo en LeIgual')
 
@@ -448,7 +467,7 @@ class Igual(OperacionBinaria):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast:
-            self.cast = 'bool'
+            self.cast = 'BOOL'
         else:
             raise Exception('operandos con distinto tipo en Igual')
 
@@ -465,6 +484,7 @@ class Neg(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
+        self.expr.Tipo(Ambito)
         self.cast = self.expr.cast
 
 
@@ -481,6 +501,7 @@ class Not(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
+        self.expr.Tipo(Ambito)
         self.cast = self.expr.cast
 
 
@@ -496,6 +517,7 @@ class EsNulo(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
+        self.expr.Tipo(Ambito)
         self.cast = self.expr.cast
 
 
@@ -522,6 +544,9 @@ class NoExpr(Expresion):
         resultado += f'{(n)*" "}_no_expr\n'
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
+
+    def Tipo(self, Ambito):
+        self.cast = Ambito.find_simbol(self.nombre)
 
 
 @dataclass
@@ -571,8 +596,6 @@ class Booleano(Expresion):
 class IterableNodo(Nodo):
     secuencia: List = field(default_factory=List)
 
-#TODO ademas tendremos que hacer algo asi como lo de abrir scope o algo asi
-
 class Programa(IterableNodo):
     def str(self, n):
         resultado = super().str(n)
@@ -580,18 +603,18 @@ class Programa(IterableNodo):
         resultado += ''.join([c.str(n+2) for c in self.secuencia])
         return resultado
 
-    def tipo(self):
+    def Tipo(self):
         ambito = Ambito()
         for clase in self.secuencia:
-            ambito.add_class(clase.nombre, clase.padre)
+            ambito.add_padre(clase.nombre, clase.padre)
             for caracteristica in clase.caracteristicas:
                 if isinstance(caracteristica, Metodo):
-                    ambito.add_method(caracteristica.nombre, clase.nombre, caracteristica.formales, caracteristica.tipo)
+                    ambito.add_method(clase.nombre, caracteristica.nombre, caracteristica.formales, caracteristica.tipo)
                 else:
-                    ambito.add_attr(caracteristica.nombre, clase.nombre, caracteristica.tipo)
+                    ambito.add_attr(clase.nombre, caracteristica.nombre, caracteristica.tipo)
 
         for clase in self.secuencia:
-            clase.tipo(ambito)
+            clase.Tipo(ambito)
 
 @dataclass
 class Caracteristica(Nodo):
@@ -600,7 +623,11 @@ class Caracteristica(Nodo):
     cuerpo: Expresion = None
 
     def Tipo(self, Ambito):
-        self.cast = self.tipo
+        self.cuerpo.Tipo(Ambito)
+        if self.tipo == self.cuerpo.cast:
+            self.cast = self.tipo
+        else:
+            raise Exception('mal tipo caracteristicas')
 
 
 @dataclass
@@ -628,11 +655,9 @@ class Clase(Nodo):
         resultado += f'{(n) * " "} class {self.nombre}({self.padre}):\n'
         resultado += '\t'.join([c.str(n+2) for c in self.caracteristicas])
         resultado += '\n'
-        resultado += f'{(n+2)*" "})\n'
+        #resultado += f'{(n+2)*" "})\n'
         return resultado
 
-    #TODO chequear
-    #TODO puede ser caracteristica.cast
     def Tipo(self, Ambito):
         Ambito.new_scope()
         for caracteristica in self.caracteristicas:
@@ -651,6 +676,12 @@ class Metodo(Caracteristica):
         resultado += ''.join([c.str(n+2) for c in self.formales])
         resultado += f'{(n + 2) * " "}{self.tipo}\n'
         resultado += self.cuerpo.str(n+2)
+        return resultado
+
+    def codigo(self, n):
+        resultado += f'{(n) * " "} def {self.nombre}({[c.str(n) for c in self.formales]}):\n'
+        resultado += self.cuerpo.str(n+1)
+        resultado += '\n'
         return resultado
 
     def Tipo(self, Ambito):
