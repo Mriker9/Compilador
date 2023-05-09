@@ -208,7 +208,7 @@ class Condicional(Expresion):
         self.verdadero.Tipo(Ambito)
         self.falso.Tipo(Ambito)
 
-        if self.condicion.cast != 'BOOL':
+        if self.condicion.cast != 'Bool':
             raise Exception('condición mal tipo')
 
         self.cast = Ambito.mca(self.verdadero.cast, self.falso.cast)
@@ -351,7 +351,7 @@ class Suma(OperacionBinaria):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'INT_CONST':
-            self.cast = 'INT_CONST'
+            self.cast = 'Int'
         else:
             raise Exception('operandos con distinto tipo en Suma')
 
@@ -372,7 +372,7 @@ class Resta(OperacionBinaria):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'INT_CONST':
-            self.cast = 'INT_CONST'
+            self.cast = 'Int'
         else:
             raise Exception('operandos con distinto tipo en Resta')
 
@@ -393,7 +393,7 @@ class Multiplicacion(OperacionBinaria):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'INT_CONST':
-            self.cast = 'INT_CONST'
+            self.cast = 'Int'
         else:
             raise Exception('operandos con distinto tipo en Multiplicacion')
 
@@ -414,7 +414,7 @@ class Division(OperacionBinaria):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast and self.derecha.cast == 'INT_CONST':
-            self.cast = 'INT_CONST'
+            self.cast = 'Int'
         else:
             raise Exception('operandos con distinto tipo en Division')
 
@@ -435,7 +435,7 @@ class Menor(OperacionBinaria):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast:
-            self.cast = 'BOOL'
+            self.cast = 'Bool'
         else:
             raise Exception('operandos con distinto tipo en Menor')
 
@@ -455,7 +455,7 @@ class LeIgual(OperacionBinaria):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast:
-            self.cast = 'BOOL'
+            self.cast = 'Bool'
         else:
             raise Exception('operandos con distinto tipo en LeIgual')
 
@@ -477,7 +477,7 @@ class Igual(OperacionBinaria):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
         if self.izquierda.cast == self.derecha.cast:
-            self.cast = 'BOOL'
+            self.cast = 'Bool'
         else:
             raise Exception('operandos con distinto tipo en Igual')
 
@@ -501,7 +501,7 @@ class Neg(Expresion):
 @dataclass
 class Not(Expresion):
     expr: Expresion = None
-    operador: str = 'NOT'
+    operador: str = 'Not'
 
     def str(self, n):
         resultado = super().str(n)
@@ -622,7 +622,6 @@ class Programa(IterableNodo):
                     ambito.add_method(clase.nombre, caracteristica.nombre, caracteristica.formales, caracteristica.tipo)
                 else:
                     ambito.add_attr(clase.nombre, caracteristica.nombre, caracteristica.tipo)
-
         for clase in self.secuencia:
             clase.Tipo(ambito)
 
@@ -704,7 +703,6 @@ class Metodo(Caracteristica):
         for formal in self.formales:
             Ambito.add_simbol(formal.nombre_variable, formal.tipo)
         self.cuerpo.Tipo(Ambito)
-
         if not Ambito.es_subtipo(self.tipo, self.cuerpo.cast):
             raise Exception('error de tipos en Metodo')
         Ambito.end_scope()

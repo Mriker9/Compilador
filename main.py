@@ -6,8 +6,8 @@ from colorama import init
 from termcolor import colored
 init()
 
-DIRECTORIO = os.path.expanduser(r"C:/Users/Usuario/WorkSpace/VSCodeWorkspace/LP/Compilador")
-#DIRECTORIO = os.path.expanduser(r"C:\Users\Usuario\Documents\CURSO2022-2023\lenguajes\practicas\p\Compilador")
+#DIRECTORIO = os.path.expanduser(r"C:/Users/Usuario/WorkSpace/VSCodeWorkspace/LP/Compilador")
+DIRECTORIO = os.path.expanduser(r"C:\Users\Usuario\Documents\CURSO2022-2023\lenguajes\practicas\p\Compilador")
 sys.path.append(DIRECTORIO)
 
 from Lexer import *
@@ -24,8 +24,8 @@ TESTS = [fich for fich in FICHEROS
          if os.path.isfile(os.path.join(DIR, fich)) and
          re.search(r"^[a-zA-Z].*\.(cool|test|cl)$",fich)]
 TESTS.sort()
-TESTS = ['Assignment.Test']
-#TESTS = ['anattributenamedself.test']
+#TESTS = ['Assignment.Test']
+TESTS = ['anattributenamedself.test']
 # nestedlet.test
 # associativitydiv.test
 # assignment.test
