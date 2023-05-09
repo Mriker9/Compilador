@@ -312,11 +312,13 @@ class Nueva(Nodo):
         resultado = super().str(n)
         resultado += f'{(n)*" "}_new\n'
         resultado += f'{(n+2)*" "}{self.tipo}\n'
-        resultado += f'{(n)*" "}: {self.cast}\n'
+        #resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    '''
     def Tipo(self, Ambito):
         self.cast = self.tipo
+    '''
 
 @dataclass
 class OperacionBinaria(Expresion):
@@ -660,7 +662,7 @@ class Clase(Nodo):
     def Tipo(self, Ambito):
         Ambito.new_scope()
         for caracteristica in self.caracteristicas:
-            Ambito.add_simbol(caracteristica.OBJECTID, caracteristica.TYPEID)
+            Ambito.add_simbol(caracteristica.nombre, caracteristica.tipo)
         Ambito.end_scope()
         self.cast = self.nombre
 
@@ -677,16 +679,18 @@ class Metodo(Caracteristica):
         resultado += self.cuerpo.str(n+2)
         return resultado
 
+    '''
     def codigo(self, n):
         resultado += f'{(n) * " "} def {self.nombre}({[c.str(n) for c in self.formales]}):\n'
         resultado += self.cuerpo.str(n+1)
         resultado += '\n'
         return resultado
+    '''
 
     def Tipo(self, Ambito):
         Ambito.new_scope()
         for formal in self.formales:
-            Ambito.add_simbol(formal.OBJECTID, formal.TYPEID)
+            Ambito.add_simbol(formal.nombre_variable, formal.tipo)
         self.cuerpo.Tipo(Ambito)
 
         if not Ambito.es_subtipo(self.tipo, self.cuerpo.cast):
@@ -703,3 +707,6 @@ class Atributo(Caracteristica):
         resultado += f'{(n+2)*" "}{self.tipo}\n'
         resultado += self.cuerpo.str(n+2)
         return resultado
+
+    def Tipo(self, Ambito):
+        self.cast = Ambito.find_simbol(self.nombre)

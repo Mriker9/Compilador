@@ -1,1 +1,37 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    Cow
+    Animal
+    "baddispatch.test"
+    (
+    _method
+      moo
+      String
+      _string
+        "moo"
+      : _no_type
+    )
+  _class
+    Blerg
+    Object
+    "baddispatch.test"
+    (
+    _method
+      foo
+      Object
+      _let
+        cow
+        Animal
+        _new
+          Cow
+        _static_dispatch
+          _object
+            cow
+          : _no_type
+          _no_type
+          moo
+          (
+          )
+        : _no_type
+      : _no_type
+    )

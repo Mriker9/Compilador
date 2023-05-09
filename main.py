@@ -7,7 +7,7 @@ from termcolor import colored
 init()
 
 
-DIRECTORIO = os.path.expanduser(r"C:\Users\Usuario\WorkSpace\VSCodeWorkspace\LP\Compilador")
+DIRECTORIO = os.path.expanduser(r"C:\Users\Usuario\Documents\CURSO2022-2023\lenguajes\practicas\p\Compilador")
 sys.path.append(DIRECTORIO)
 
 from Lexer import *

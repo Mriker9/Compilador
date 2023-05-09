@@ -1,1 +1,37 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    A
+    Object
+    "overridingmethod.test"
+    (
+    _method
+      foo
+      Int
+      _int
+        6
+      : _no_type
+    )
+  _class
+    B
+    A
+    "overridingmethod.test"
+    (
+    _method
+      foo
+      Int
+      _int
+        7
+      : _no_type
+    )
+  _class
+    Main
+    Object
+    "overridingmethod.test"
+    (
+    _method
+      main
+      Int
+      _int
+        6
+      : _no_type
+    )

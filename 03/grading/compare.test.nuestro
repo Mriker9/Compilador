@@ -1,1 +1,28 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    C
+    Object
+    "compare.test"
+    (
+    _attr
+      a
+      A
+      _no_expr
+      : _no_type
+    _attr
+      b
+      B
+      _no_expr
+      : _no_type
+    _method
+      compare
+      Bool
+      _eq
+        _object
+          a
+        : _no_type
+        _object
+          b
+        : _no_type
+      : _no_type
+    )

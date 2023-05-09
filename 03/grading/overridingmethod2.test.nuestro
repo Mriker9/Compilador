@@ -1,1 +1,66 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    Main
+    Object
+    "overridingmethod2.test"
+    (
+    _method
+      main
+      Int
+      _int
+        0
+      : _no_type
+    )
+  _class
+    A
+    Object
+    "overridingmethod2.test"
+    (
+    _method
+      inky
+      _formal
+        a
+        Int
+      _formal
+        b
+        String
+      _formal
+        c
+        A
+      _formal
+        d
+        Bool
+      Int
+      _object
+        a
+      : _no_type
+    )
+  _class
+    B
+    A
+    "overridingmethod2.test"
+    (
+    _method
+      inky
+      _formal
+        a
+        Int
+      _formal
+        b
+        String
+      _formal
+        c
+        A
+      _formal
+        d
+        Bool
+      Int
+      _plus
+        _object
+          a
+        : _no_type
+        _int
+          1
+        : _no_type
+      : _no_type
+    )

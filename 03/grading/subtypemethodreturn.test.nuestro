@@ -1,1 +1,25 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    B
+    A
+    "subtypemethodreturn.test"
+    (
+    _method
+      foo
+      A
+      _object
+        self
+      : _no_type
+    )
+  _class
+    Main
+    Object
+    "subtypemethodreturn.test"
+    (
+    _method
+      main
+      Int
+      _int
+        6
+      : _no_type
+    )

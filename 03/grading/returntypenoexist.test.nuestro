@@ -1,1 +1,12 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    Main
+    Object
+    "returntypenoexist.test"
+    (
+    _method
+      main
+      PinkElephant
+      _new
+        PinkElephant
+    )

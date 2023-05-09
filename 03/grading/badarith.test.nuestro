@@ -1,1 +1,30 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    Main
+    Object
+    "badarith.test"
+    (
+    _method
+      main
+      Int
+      _int
+        0
+      : _no_type
+    )
+  _class
+    A
+    Object
+    "badarith.test"
+    (
+    _method
+      inky
+      Object
+      _plus
+        _int
+          1
+        : _no_type
+        _string
+          "hello"
+        : _no_type
+      : _no_type
+    )

@@ -1,1 +1,37 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    Main
+    Object
+    "basicclassestree.test"
+    (
+    _method
+      main
+      Int
+      _int
+        0
+      : _no_type
+    )
+  _class
+    A
+    Object
+    "basicclassestree.test"
+    (
+    _attr
+      a
+      Object
+      _int
+        0
+      : _no_type
+    _attr
+      b
+      Object
+      _string
+        ""
+      : _no_type
+    _attr
+      c
+      Object
+      _bool
+        1
+      : _no_type
+    )

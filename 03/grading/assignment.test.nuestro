@@ -1,13 +1,13 @@
 _program
   _class
-    Main
+    Foo
     Object
-    "comparisons.test"
+    "assignment.test"
     (
-    _method
-      main
+    _attr
+      x
       Int
       _int
-        6
+        3
       : _no_type
     )

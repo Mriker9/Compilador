@@ -2,7 +2,7 @@ _program
   _class
     Main
     Object
-    "selftyperedeclared.test"
+    "anattributenamedself.test"
     (
     _method
       main
@@ -12,17 +12,25 @@ _program
       : _no_type
     )
   _class
-    SELF_TYPE
+    A
     Object
-    "selftyperedeclared.test"
+    "anattributenamedself.test"
     (
+    _attr
+      self
+      A
+      _new
+        A
     _method
       foo
       _formal
         x
-        Object
-      Object
-      _object
+        String
+      String
+      _assign
         x
+        _string
+          "a boy named sue"
+        : _no_type
       : _no_type
     )
