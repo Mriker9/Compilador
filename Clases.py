@@ -31,6 +31,15 @@ class Ambito:
     def add_simbol(self, variable, tipo):
         self.stack[-1][variable] = tipo
 
+    def pop_simbol(self, variable):
+        self.stack[-1][variable].pop()
+
+    def empty_stack(self):
+        self.stack = [dict()]
+        self.lista_pdr = dict()
+        self.lista_attr = dict()
+        self.lista_meth = dict()   
+
     def find_simbol(self, variable):
         return self.stack[-1][variable]
 
@@ -701,12 +710,15 @@ class Metodo(Caracteristica):
 class Atributo(Caracteristica):
 
     def str(self, n):
-        resultado = super().str(n)
-        resultado += f'{(n)*" "}_attr\n'
-        resultado += f'{(n+2)*" "}{self.nombre}\n'
-        resultado += f'{(n+2)*" "}{self.tipo}\n'
-        resultado += self.cuerpo.str(n+2)
-        return resultado
+        if self.nombre == 'self':
+            raise Exception('self cannot be the name of an attribute.')
+        else:
+            resultado = super().str(n)
+            resultado += f'{(n)*" "}_attr\n'
+            resultado += f'{(n+2)*" "}{self.nombre}\n'
+            resultado += f'{(n+2)*" "}{self.tipo}\n'
+            resultado += self.cuerpo.str(n+2)
+            return resultado
 
     def Tipo(self, Ambito):
         self.cast = Ambito.find_simbol(self.nombre)

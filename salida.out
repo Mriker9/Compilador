@@ -64,9 +64,9 @@ Rule 59    ramaCases -> ramaCases ramaCase ;
 Unused terminals:
 
     CMT_CONST
-    NUMBER
     CMT_CONST1
     ERROR
+    NUMBER
 
 Terminals, with rules where they appear:
 

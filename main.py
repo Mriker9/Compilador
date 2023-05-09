@@ -80,9 +80,9 @@ if True:
                     try:
                         j.Tipo()
                         resultado = '\n'.join([c for c in j.str(0).split('\n')
-                                           if c and '#' not in c])
+                                        if c and '#' not in c])
                     except Exception as e:
-                        print(e)
+                        resultado = str(e)
                 else:
                     resultado = '\n'.join(parser.errores)
                     resultado += '\n' + "Compilation halted due to lex and parse errors"
