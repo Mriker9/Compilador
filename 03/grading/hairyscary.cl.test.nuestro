@@ -1,1 +1,33 @@
-'String'
+_program
+  _class
+    Main
+    Object
+    "hairyscary.cl.test"
+    (
+    _attr
+      a
+      Bazz
+      _new
+        Bazz
+    _attr
+      b
+      Foo
+      _new
+        Foo
+    _attr
+      c
+      Razz
+      _new
+        Razz
+    _attr
+      d
+      Bar
+      _new
+        Bar
+    _method
+      main
+      String
+      _string
+        "do nothing"
+      : String
+    )

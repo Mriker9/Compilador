@@ -713,15 +713,15 @@ class Metodo(Caracteristica):
 class Atributo(Caracteristica):
 
     def str(self, n):
+        resultado = super().str(n)
+        resultado += f'{(n)*" "}_attr\n'
+        resultado += f'{(n+2)*" "}{self.nombre}\n'
+        resultado += f'{(n+2)*" "}{self.tipo}\n'
+        resultado += self.cuerpo.str(n+2)
+        return resultado
+
+    def Tipo(self, Ambito):
         if self.nombre == 'self':
             raise Exception(f'{self.linea}: \'self\' cannot be the name of an attribute.')
         else:
-            resultado = super().str(n)
-            resultado += f'{(n)*" "}_attr\n'
-            resultado += f'{(n+2)*" "}{self.nombre}\n'
-            resultado += f'{(n+2)*" "}{self.tipo}\n'
-            resultado += self.cuerpo.str(n+2)
-            return resultado
-
-    def Tipo(self, Ambito):
-        self.cast = Ambito.find_simbol(self.nombre)
+            self.cast = Ambito.find_simbol(self.nombre)

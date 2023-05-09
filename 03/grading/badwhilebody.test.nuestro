@@ -1,1 +1,2 @@
-'Int'
+badwhilebody.test:('Int', 'length')
+Compilation halted due to static semantic errors.

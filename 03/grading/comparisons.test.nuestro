@@ -1,1 +1,13 @@
-'Int'
+_program
+  _class
+    Main
+    Object
+    "comparisons.test"
+    (
+    _method
+      main
+      Int
+      _int
+        6
+      : Int
+    )

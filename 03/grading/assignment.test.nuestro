@@ -2,7 +2,7 @@ _program
   _class
     Foo
     Object
-    "assignment.test"
+    "Assignment.Test"
     (
     _attr
       x

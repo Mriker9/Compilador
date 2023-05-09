@@ -24,11 +24,13 @@ TESTS = [fich for fich in FICHEROS
          if os.path.isfile(os.path.join(DIR, fich)) and
          re.search(r"^[a-zA-Z].*\.(cool|test|cl)$",fich)]
 TESTS.sort()
-TESTS = ['anattributenamedself.test']
-#TESTS = ['baddispatch1.test']
+TESTS = ['Assignment.Test']
+#TESTS = ['anattributenamedself.test']
 # nestedlet.test
 # associativitydiv.test
 # assignment.test
+#anattributenamedself.test
+
 
 
 
