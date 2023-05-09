@@ -12,7 +12,7 @@ from typing import List
 
 class Ambito:
     stack = [dict()]
-    lista_pdr = dict()
+    lista_pdr = dict({'Int': 'Object', 'String': 'Object', 'Bool': 'Object', 'IO': 'Object', 'Object': 'Object'})
     lista_attr = dict()
     lista_meth = dict()
 
@@ -38,7 +38,7 @@ class Ambito:
         self.stack = [dict()]
         self.lista_pdr = dict()
         self.lista_attr = dict()
-        self.lista_meth = dict()   
+        self.lista_meth = dict()
 
     def find_simbol(self, variable):
         return self.stack[-1][variable]
@@ -571,7 +571,7 @@ class Entero(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
-        self.cast = "INT_CONST"
+        self.cast = "Int"
 
 
 @dataclass
@@ -586,7 +586,7 @@ class String(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
-        self.cast = "STR_CONST"
+        self.cast = "String"
 
 @dataclass
 class Booleano(Expresion):
@@ -600,7 +600,7 @@ class Booleano(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
-        self.cast = "BOOL"
+        self.cast = "Bool"
 
 @dataclass
 class IterableNodo(Nodo):
@@ -672,7 +672,10 @@ class Clase(Nodo):
         Ambito.new_scope()
         for caracteristica in self.caracteristicas:
             Ambito.add_simbol(caracteristica.nombre, caracteristica.tipo)
+        for car in self.caracteristicas:
+            car.Tipo(Ambito)
         Ambito.end_scope()
+
         self.cast = self.nombre
 
 @dataclass
@@ -711,7 +714,7 @@ class Atributo(Caracteristica):
 
     def str(self, n):
         if self.nombre == 'self':
-            raise Exception('self cannot be the name of an attribute.')
+            raise Exception(f'{self.linea}: \'self\' cannot be the name of an attribute.')
         else:
             resultado = super().str(n)
             resultado += f'{(n)*" "}_attr\n'

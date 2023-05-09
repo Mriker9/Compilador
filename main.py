@@ -24,7 +24,7 @@ TESTS = [fich for fich in FICHEROS
          if os.path.isfile(os.path.join(DIR, fich)) and
          re.search(r"^[a-zA-Z].*\.(cool|test|cl)$",fich)]
 TESTS.sort()
-TESTS = TESTS
+TESTS = ['anattributenamedself.test']
 #TESTS = ['baddispatch1.test']
 # nestedlet.test
 # associativitydiv.test
@@ -58,7 +58,7 @@ if True:
                     nuestro = [linea for linea in texto.split('\n') if linea]
                     bien = [linea for linea in resultado.split('\n') if linea]
                     linea = 0
-                    while nuestro[linea:linea+NUMLINEAS] == bien[linea:linea+NUMLINEAS] and linea < 100000:
+                    while nuestro[linea:linea+NUMLINEAS] == bien[linea:linea+NUMLINEAS] and linea < 100:
                         linea += 1
                     print(colored('\n'.join(nuestro[linea:linea+NUMLINEAS]), 'white', 'on_red'))
                     print(colored('\n'.join(bien[linea:linea+NUMLINEAS]), 'blue', 'on_green'))
@@ -82,7 +82,10 @@ if True:
                         resultado = '\n'.join([c for c in j.str(0).split('\n')
                                         if c and '#' not in c])
                     except Exception as e:
-                        resultado = str(e)
+                        resultado = fich + ':'
+                        resultado += str(e)
+                        resultado += '\n' + "Compilation halted due to static semantic errors."
+                        #traceback.print_exc()
                 else:
                     resultado = '\n'.join(parser.errores)
                     resultado += '\n' + "Compilation halted due to lex and parse errors"
