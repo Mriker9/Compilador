@@ -15,7 +15,6 @@ class Ambito:
     lista_pdr = dict()
     lista_attr = dict()
     lista_meth = dict()
-    var = True
 
     def new_scope(self):
         self.stack.append(dict())
@@ -689,7 +688,8 @@ class Metodo(Caracteristica):
         for formal in self.formales:
             Ambito.add_simbol(formal.OBJECTID, formal.TYPEID)
         self.cuerpo.Tipo(Ambito)
-        if not Ambito.eshijo(self.tipo, self.cuerpo.cast):
+
+        if not Ambito.es_subtipo(self.tipo, self.cuerpo.cast):
             raise Exception('error de tipos en Metodo')
         Ambito.end_scope()
 
