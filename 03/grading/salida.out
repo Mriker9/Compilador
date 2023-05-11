@@ -58,10 +58,10 @@ Rule 54    ramaCases -> ramaCases ramaCase ;
 
 Unused terminals:
 
-    CMT_CONST1
-    ERROR
-    NUMBER
     CMT_CONST
+    ERROR
+    CMT_CONST1
+    NUMBER
 
 Terminals, with rules where they appear:
 

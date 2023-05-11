@@ -25,7 +25,7 @@ TESTS = [fich for fich in FICHEROS
          re.search(r"^[a-zA-Z].*\.(cool|test|cl)$",fich)]
 TESTS.sort()
 #TESTS = TESTS
-TESTS = ['Assignment.Test']
+TESTS = ['assignnoconform.test']
 
 
 if True:

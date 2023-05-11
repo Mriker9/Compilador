@@ -21,7 +21,7 @@ _program
       A
       _new
         A
-      : _no_type
+      : A
     _method
       foo
       _formal

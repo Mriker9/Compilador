@@ -9,7 +9,7 @@ _program
       Main
       _object
         self
-      : _no_type
+      : A
     _method
       main
       Object

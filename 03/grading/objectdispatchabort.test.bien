@@ -1,0 +1,1 @@
+_program  _class    A    Object    "objectdispatchabort.test"    (    _method      foo      Object      _dispatch        _new          Object        : Object        abort        (        )      : Object    )  _class    Main    Object    "objectdispatchabort.test"    (    _method      main      Int      _int        6      : Int    )
