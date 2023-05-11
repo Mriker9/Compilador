@@ -1,2 +1,34 @@
-selfinformalparameter.test:'Nueva' object has no attribute 'cast'
-Compilation halted due to static semantic errors.
+_program
+  _class
+    Main
+    Object
+    "selfinformalparameter.test"
+    (
+    _method
+      main
+      Int
+      _int
+        0
+      : Int
+    )
+  _class
+    A
+    Object
+    "selfinformalparameter.test"
+    (
+    _attr
+      x
+      A
+      _new
+        A
+      : _no_type
+    _method
+      foo
+      _formal
+        self
+        String
+      String
+      _string
+        "hoo-ah"
+      : String
+    )

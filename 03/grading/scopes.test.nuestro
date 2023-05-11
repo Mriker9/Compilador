@@ -1,2 +1,2 @@
-scopes.test:'self'
+scopes.test:error
 Compilation halted due to static semantic errors.

@@ -1,1 +1,2 @@
-Compilation halted due to lex and parse errors
+letselftype.test:let con mal tipo
+Compilation halted due to static semantic errors.

@@ -1,2 +1,2 @@
-badargs1.test:error de tipos en Metodo
+badargs1.test:'Expresion' object has no attribute 'Tipo'
 Compilation halted due to static semantic errors.

@@ -1,2 +1,2 @@
-selftypeparameterposition.test:error de tipos en Metodo
+selftypeparameterposition.test:'SELF_TYPE'
 Compilation halted due to static semantic errors.

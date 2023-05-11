@@ -1,1 +1,2 @@
-Compilation halted due to lex and parse errors
+basic.test:('Int', 'copy')
+Compilation halted due to static semantic errors.

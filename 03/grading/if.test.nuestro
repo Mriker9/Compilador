@@ -1,1 +1,2 @@
-Compilation halted due to lex and parse errors
+if.test:'Expresion' object has no attribute 'Tipo'
+Compilation halted due to static semantic errors.

@@ -1,2 +1,2 @@
-subtypemethodreturn.test:'self'
+subtypemethodreturn.test:error
 Compilation halted due to static semantic errors.

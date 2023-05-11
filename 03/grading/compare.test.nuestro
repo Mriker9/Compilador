@@ -1,2 +1,2 @@
-compare.test:'a'
+compare.test:operandos con distinto tipo en Igual
 Compilation halted due to static semantic errors.

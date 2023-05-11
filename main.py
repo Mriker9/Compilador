@@ -26,11 +26,6 @@ TESTS = [fich for fich in FICHEROS
 TESTS.sort()
 #TESTS = TESTS
 TESTS = ['Assignment.Test']
-#TESTS = ['anattributenamedself.test']
-# nestedlet.test
-# associativitydiv.test
-# assignment.test
-#anattributenamedself.test
 
 
 if True:
@@ -103,7 +98,7 @@ if True:
                         f = open(os.path.join(DIR, fich)+'.nuestro', 'w')
                         g = open(os.path.join(DIR, fich)+'.bien', 'w')
                         f.write(resultado.strip())
-                        g.write(bien.strip())
+                        g.write(''.join(bien).strip())
                         f.close()
                         g.close()
             except Exception as e:

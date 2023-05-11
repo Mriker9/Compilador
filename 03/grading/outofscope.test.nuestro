@@ -1,1 +1,24 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    Main
+    Object
+    "outofscope.test"
+    (
+    _method
+      main
+      Object
+      _block
+        _let
+          x
+          Int
+          _no_expr
+          : _no_type
+          _int
+            10
+          : Int
+        : Int
+        _object
+          x
+        : Bool
+      : Bool
+    )

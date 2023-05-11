@@ -1,1 +1,21 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    Main
+    IO
+    "initwithself.test"
+    (
+    _attr
+      x
+      Main
+      _object
+        self
+      : _no_type
+    _method
+      main
+      Object
+      _block
+        _object
+          self
+        : A
+      : A
+    )

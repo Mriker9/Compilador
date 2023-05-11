@@ -1,1 +1,2 @@
-Compilation halted due to lex and parse errors
+simplearith.test:operandos con distinto tipo en Suma
+Compilation halted due to static semantic errors.

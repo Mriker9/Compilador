@@ -34,17 +34,14 @@ class CoolParser(Parser):
     @_('clases clase ";"')
     def clases(self, p):
         p.clases.append(p.clase)
-        print(p.clase.nombre)
         return p.clases
 
     @_('clase ";"')
     def clases(self, p):
-        print(p.clase.nombre)
         return [p.clase]
 
     @_('CLASS TYPEID INHERITS TYPEID "{" features "}"')
     def clase(self, p):
-        print(p.TYPEID0)
         return Clase(
             linea = p.lineno,
             nombre = p.TYPEID0,

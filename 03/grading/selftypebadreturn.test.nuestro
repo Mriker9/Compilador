@@ -1,2 +1,2 @@
-selftypebadreturn.test:'Nueva' object has no attribute 'Tipo'
+selftypebadreturn.test:error de tipos en Metodo
 Compilation halted due to static semantic errors.

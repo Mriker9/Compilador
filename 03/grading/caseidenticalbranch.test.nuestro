@@ -1,1 +1,2 @@
-Compilation halted due to lex and parse errors
+caseidenticalbranch.test:Tipo() missing 1 required positional argument: 'Ambito'
+Compilation halted due to static semantic errors.

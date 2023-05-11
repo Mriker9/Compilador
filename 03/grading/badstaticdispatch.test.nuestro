@@ -1,2 +1,2 @@
-badstaticdispatch.test:error de tipos en Metodo
+badstaticdispatch.test:llamadametodoestatico con mal tipo
 Compilation halted due to static semantic errors.

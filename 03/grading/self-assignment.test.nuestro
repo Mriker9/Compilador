@@ -1,2 +1,2 @@
-self-assignment.test:'self'
+self-assignment.test:('A', 'copy')
 Compilation halted due to static semantic errors.

@@ -1,2 +1,2 @@
-methodnameclash.test:'x'
+methodnameclash.test:'Expresion' object has no attribute 'Tipo'
 Compilation halted due to static semantic errors.

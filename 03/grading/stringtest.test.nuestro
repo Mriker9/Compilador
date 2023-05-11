@@ -1,1 +1,2 @@
-Compilation halted due to lex and parse errors
+stringtest.test:('String', 'length')
+Compilation halted due to static semantic errors.

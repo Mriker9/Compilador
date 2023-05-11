@@ -1,1 +1,22 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    Main
+    IO
+    "letinit.test"
+    (
+    _method
+      main
+      Object
+      _block
+        _let
+          x
+          Int
+          _int
+            5
+          : _no_type
+          _object
+            x
+          : Int
+        : Int
+      : Int
+    )

@@ -1,2 +1,28 @@
-dupformals.test:'Nueva' object has no attribute 'Tipo'
-Compilation halted due to static semantic errors.
+_program
+  _class
+    Main
+    Object
+    "dupformals.test"
+    (
+    _method
+      main
+      Int
+      _int
+        1
+      : Int
+    _method
+      foo
+      _formal
+        x
+        Int
+      _formal
+        x
+        Bool
+      _formal
+        x
+        String
+      Object
+      _new
+        Object
+      : Object
+    )

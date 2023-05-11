@@ -709,7 +709,7 @@ class Metodo(Caracteristica):
         for formal in self.formales:
             Ambito.add_simbol(formal.nombre_variable, formal.tipo)
         self.cuerpo.Tipo(Ambito)
-        if not Ambito.es_subtipo(self.tipo, self.cuerpo.cast):
+        if not Ambito.es_subtipo(self.cuerpo.cast, self.tipo):
             raise Exception('error de tipos en Metodo')
         Ambito.end_scope()
 
@@ -725,6 +725,7 @@ class Atributo(Caracteristica):
         return resultado
 
     def Tipo(self, Ambito):
+        self.cuerpo.Tipo(Ambito)
         if self.nombre == 'self':
             raise Exception(f'{self.linea}: \'self\' cannot be the name of an attribute.')
         else:
