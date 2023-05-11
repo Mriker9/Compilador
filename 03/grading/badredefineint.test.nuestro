@@ -1,1 +1,19 @@
-Compilation halted due to lex and parse errors
+_program
+  _class
+    Main
+    Object
+    "badredefineint.test"
+    (
+    _method
+      main
+      Int
+      _int
+        0
+      : Int
+    )
+  _class
+    Int
+    Object
+    "badredefineint.test"
+    (
+    )
