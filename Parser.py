@@ -40,6 +40,16 @@ class CoolParser(Parser):
     def clases(self, p):
         return [p.clase]
 
+    @_('CLASS TYPEID INHERITS TYPEID "{" "}"')
+    def clase(self, p):
+        return Clase(
+            linea = p.lineno,
+            nombre = p.TYPEID0,
+            padre = p.TYPEID1,
+            nombre_fichero = self.nombre_fichero,
+            caracteristicas = []
+        )
+
     @_('CLASS TYPEID INHERITS TYPEID "{" features "}"')
     def clase(self, p):
         return Clase(
@@ -48,6 +58,16 @@ class CoolParser(Parser):
             padre = p.TYPEID1,
             nombre_fichero = self.nombre_fichero,
             caracteristicas = p.features
+        )
+
+    @_('CLASS TYPEID "{" "}"')
+    def clase(self, p):
+        return Clase(
+            linea = p.lineno,
+            nombre = p.TYPEID,
+            padre = "Object",
+            nombre_fichero = self.nombre_fichero,
+            caracteristicas = []
         )
 
     @_('CLASS TYPEID "{" features "}"')

@@ -1,2 +1,2 @@
-caseidenticalbranch.test:Tipo() missing 1 required positional argument: 'Ambito'
+caseidenticalbranch.test:RamaCase.Tipo() missing 1 required positional argument: 'Ambito'
 Compilation halted due to static semantic errors.
