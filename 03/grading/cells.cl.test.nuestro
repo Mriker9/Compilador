@@ -1,2 +1,2 @@
-cells.cl.test:error de tipos en Metodo
+cells.cl.test:7:error de tipos en Metodo
 Compilation halted due to static semantic errors.

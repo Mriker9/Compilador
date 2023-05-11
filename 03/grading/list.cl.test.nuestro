@@ -1,2 +1,2 @@
-list.cl.test:no encontrado
+list.cl.test:can only concatenate str (not "int") to str
 Compilation halted due to static semantic errors.

@@ -1,2 +1,2 @@
-methodcallsitself.test:no encontrado
+methodcallsitself.test:can only concatenate str (not "int") to str
 Compilation halted due to static semantic errors.

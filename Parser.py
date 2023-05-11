@@ -172,20 +172,18 @@ class CoolParser(Parser):
 
     @_('expr "." OBJECTID "(" ")" ')
     def expr(self, p):
-        return LlamadaMetodoEstatico(
+        return LlamadaMetodo(
             linea = p.lineno,
             cuerpo = p.expr,
-            clase = '_no_type',
             nombre_metodo = p.OBJECTID,
             argumentos = []
         )
 
     @_('expr "." OBJECTID "(" exprs_add ")" ')
     def expr(self, p):
-        return LlamadaMetodoEstatico(
+        return LlamadaMetodo(
             linea = p.lineno,
             cuerpo = p.expr,
-            clase = '_no_type',
             nombre_metodo = p.OBJECTID,
             argumentos = p.exprs_add
         )
@@ -404,9 +402,7 @@ class CoolParser(Parser):
 
     @_('( expr )')
     def expr(self, p):
-        return Expresion(
-            linea = p.lineno
-        )
+        return p.expr
 
     @_('OBJECTID')
     def expr(self, p):

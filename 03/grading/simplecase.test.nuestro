@@ -1,2 +1,2 @@
-simplecase.test:no encontrado
+simplecase.test:6: Undeclared identifier i.
 Compilation halted due to static semantic errors.

@@ -1,2 +1,2 @@
-inheritsstring.test:error de tipos en Metodo
+inheritsstring.test:4:error de tipos en Metodo
 Compilation halted due to static semantic errors.

@@ -7,6 +7,7 @@ class Ambito:
     lista_pdr = dict({'Int': 'Object', 'String': 'Object', 'Bool': 'Object', 'IO': 'Object', 'Object': 'Object'})
     lista_attr = dict()
     lista_meth = dict()
+    current_class = ''
 
     def new_scope(self):
         self.stack.append(dict())
@@ -19,6 +20,12 @@ class Ambito:
             return True
         else:
             return False
+
+    def set_class(self, clase):
+        self.current_class = clase
+
+    def get_class(self):
+        return self.current_class
 
     def add_simbol(self, variable, tipo):
         self.stack[-1][variable] = tipo
@@ -47,13 +54,31 @@ class Ambito:
         self.lista_meth[(clase, metodo)] = [formales, tipo]
 
     def get_method(self, clase, metodo):
-        return self.lista_meth[(clase, metodo)]
+        if (clase, metodo) in self.lista_meth:
+            return self.lista_meth[(clase, metodo)]
+        else:
+            if clase != 'Object':
+                self.get_method(self.get_padre(clase), metodo)
+            else:
+                raise Exception('error get meth')
+
+    def check_method(self, clase, metodo):
+        return (clase, metodo) in self.lista_meth
 
     def add_attr(self, clase, attr, tipo):
         self.lista_attr[(clase, attr)] = tipo
 
     def get_attr(self, clase, attr):
-        return self.lista_attr[(clase, attr)]
+        if (clase, attr) in self.lista_attr:
+            return self.lista_attr[(clase, attr)]
+        else:
+            if clase != 'Object':
+                self.get_attr(self.get_padre(clase), attr)
+            else:
+                raise Exception('error get attr')
+
+    def check_attr(self, clase, attr):
+        return (clase, attr) in self.lista_attr
 
     def es_subtipo(self, A, B):
         if A == B:
@@ -118,10 +143,10 @@ class Asignacion(Expresion):
     def Tipo(self, Ambito):
         self.cuerpo.Tipo(Ambito)
 
-        if Ambito.es_subtipo(Ambito.find_simbol(self.nombre), self.cuerpo.cast):
+        if Ambito.es_subtipo(self.cuerpo.cast, Ambito.find_simbol(self.nombre)):
             self.cast = self.cuerpo.cast
         else:
-            raise Exception('error')
+            raise Exception(f'{self.linea}: Type A of assigned expression does not conform to declared type B of identifier b.')
 
 
 @dataclass
@@ -146,7 +171,7 @@ class LlamadaMetodoEstatico(Expresion):
 
     def Tipo(self, Ambito):
         self.cuerpo.Tipo(Ambito)
-        formales, tipo = Ambito.get_method(self.cuerpo.cast, self.nombre_metodo)
+        formales, tipo = Ambito.get_method(self.clase, self.nombre_metodo)
         for f, a in zip(formales, self.argumentos):
             a.Tipo(Ambito)
             if not Ambito.es_subtipo(a.cast, f.tipo):
@@ -548,8 +573,10 @@ class Objeto(Expresion):
     def Tipo(self, Ambito):
         if Ambito.find_simbol(self.nombre):
             self.cast = Ambito.find_simbol(self.nombre)
+        elif True: #TODO
+            raise Exception(f'{self.linea}: Undeclared identifier ' + self.nombre + '.')
         else:
-            raise Exception('no encontrado')
+            raise Exception(f'{self.linea + 1}: Undeclared identifier ' + self.nombre + '.')
 
 @dataclass
 class NoExpr(Expresion):
@@ -642,7 +669,7 @@ class Caracteristica(Nodo):
         if self.tipo == self.cuerpo.cast:
             self.cast = self.tipo
         else:
-            raise Exception('mal tipo caracteristicas')
+            raise Exception(f'{self.linea}:mal tipo caracteristicas')
 
 
 @dataclass
@@ -675,12 +702,12 @@ class Clase(Nodo):
 
     def Tipo(self, Ambito):
         Ambito.new_scope()
+        Ambito.set_class(self.nombre)
         for caracteristica in self.caracteristicas:
             Ambito.add_simbol(caracteristica.nombre, caracteristica.tipo)
         for car in self.caracteristicas:
             car.Tipo(Ambito)
         Ambito.end_scope()
-
         self.cast = self.nombre
 
 @dataclass
@@ -710,7 +737,7 @@ class Metodo(Caracteristica):
             Ambito.add_simbol(formal.nombre_variable, formal.tipo)
         self.cuerpo.Tipo(Ambito)
         if not Ambito.es_subtipo(self.cuerpo.cast, self.tipo):
-            raise Exception('error de tipos en Metodo')
+            raise Exception(f'{self.linea}:error de tipos en Metodo')
         Ambito.end_scope()
 
 
@@ -728,5 +755,7 @@ class Atributo(Caracteristica):
         self.cuerpo.Tipo(Ambito)
         if self.nombre == 'self':
             raise Exception(f'{self.linea}: \'self\' cannot be the name of an attribute.')
+        elif Ambito.check_attr(Ambito.get_padre(Ambito.get_class()), self.nombre):
+            raise Exception(f'{self.linea}: Attribute ' + self.nombre + ' is an attribute of an inherited class.')
         else:
             self.cast = Ambito.find_simbol(self.nombre)

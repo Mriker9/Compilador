@@ -1,2 +1,2 @@
-overridingmethod3.test:error de tipos en Metodo
+overridingmethod3.test:4:error de tipos en Metodo
 Compilation halted due to static semantic errors.

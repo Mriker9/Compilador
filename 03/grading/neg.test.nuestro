@@ -1,2 +1,2 @@
-neg.test:no encontrado
+neg.test:can only concatenate str (not "int") to str
 Compilation halted due to static semantic errors.

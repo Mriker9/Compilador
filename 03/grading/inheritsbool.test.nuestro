@@ -1,2 +1,2 @@
-inheritsbool.test:error de tipos en Metodo
+inheritsbool.test:4:error de tipos en Metodo
 Compilation halted due to static semantic errors.

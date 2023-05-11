@@ -1,2 +1,2 @@
-badargs1.test:'Expresion' object has no attribute 'Tipo'
+badargs1.test:5: Undeclared identifier self.
 Compilation halted due to static semantic errors.

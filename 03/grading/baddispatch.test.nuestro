@@ -1,2 +1,2 @@
-baddispatch.test:no encontrado
+baddispatch.test:11: Undeclared identifier cow.
 Compilation halted due to static semantic errors.
