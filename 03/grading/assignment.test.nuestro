@@ -1,13 +1,2 @@
-_program
-  _class
-    Foo
-    Object
-    "Assignment.Test"
-    (
-    _attr
-      x
-      Int
-      _int
-        3
-      : _no_type
-    )
+Assignment.Test:'x'
+Compilation halted due to static semantic errors.

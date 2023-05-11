@@ -2,7 +2,7 @@ class Main inherits IO{
  x: Int;
  y: String;
  f: Foo;
- main(): Object {{ 
+ main(): Object {{
                    x <- 3; x <- 5; y <- "test"; f <- new Foo;
                 }};
  foo(): String {"test"};

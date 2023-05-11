@@ -2,14 +2,6 @@
 from dataclasses import dataclass, field
 from typing import List
 
-#TODO como hacer bien el stack(ejemplo en Objeto linea 520)
-#TODO mirar Programa, Clase y metodo
-#TODO mirar los fallos de ejecución
-#TODO mirar expresion y si cuerpo.Tipo(Ambito) esta bien
-#TODO checkear condicional
-#TODO mirar si el switch tiene tipo
-#TODO tipo de objeto y noExpr
-
 class Ambito:
     stack = [dict()]
     lista_pdr = dict({'Int': 'Object', 'String': 'Object', 'Bool': 'Object', 'IO': 'Object', 'Object': 'Object'})
@@ -41,7 +33,9 @@ class Ambito:
         self.lista_meth = dict()
 
     def find_simbol(self, variable):
-        return self.stack[-1][variable]
+        for di in reversed(self.stack):
+            if variable in di:
+                return di[variable]
 
     def add_padre(self, clase, padre):
         self.lista_pdr[clase] = padre
@@ -123,7 +117,11 @@ class Asignacion(Expresion):
 
     def Tipo(self, Ambito):
         self.cuerpo.Tipo(Ambito)
-        self.cast = self.cuerpo.cast
+
+        if Ambito.es_subtipo(Ambito.find_simbol(self.nombre), self.cuerpo.cast):
+            self.cast = self.cuerpo.cast
+        else:
+            raise Exception('error')
 
 
 @dataclass
@@ -274,12 +272,14 @@ class Bloque(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
-        self.expresiones[-1].Tipo(Ambito)
+        for expr in self.expresiones:
+            expr.Tipo(Ambito)
+
         self.cast = self.expresiones[-1].cast
 
 
 @dataclass
-class RamaCase(Nodo):
+class RamaCase(Expresion):
     nombre_variable: str = '_no_set'
     tipo: str = '_no_set'
     cuerpo: Expresion = None
@@ -295,14 +295,11 @@ class RamaCase(Nodo):
 
     def Tipo(self, Ambito):
         self.cuerpo.Tipo(Ambito)
-        if self.tipo == self.cuerpo.cast:
-            self.cast = self.tipo
-        else:
-            raise Exception('mal tipo en ramacase')
+        self.cast = self.cuerpo.cast
 
 
 @dataclass
-class Swicht(Nodo):
+class Swicht(Expresion):
     expr: Expresion = None
     casos: List[RamaCase] = field(default_factory=list)
 
@@ -314,20 +311,27 @@ class Swicht(Nodo):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Tipo(self, Ambito):
+        self.casos[0].Tipo(Ambito)
+        self.cast = self.casos[0].cast
+        for caso in self.casos:
+            caso.Tipo(Ambito)
+            self.cast = Ambito.mca(self.cast, caso.cast)
+
+
 @dataclass
-class Nueva(Nodo):
+class Nueva(Expresion):
     tipo: str = '_no_set'
     def str(self, n):
         resultado = super().str(n)
         resultado += f'{(n)*" "}_new\n'
         resultado += f'{(n+2)*" "}{self.tipo}\n'
-        #resultado += f'{(n)*" "}: {self.cast}\n'
+        resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-    '''
     def Tipo(self, Ambito):
         self.cast = self.tipo
-    '''
+
 
 @dataclass
 class OperacionBinaria(Expresion):
@@ -527,8 +531,7 @@ class EsNulo(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
-        self.expr.Tipo(Ambito)
-        self.cast = self.expr.cast
+        self.cast = 'Bool'
 
 
 @dataclass
@@ -543,7 +546,10 @@ class Objeto(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
-        self.cast = Ambito.find_simbol(self.nombre)
+        if Ambito.find_simbol(self.nombre):
+            self.cast = Ambito.find_simbol(self.nombre)
+        else:
+            raise Exception('no encontrado')
 
 @dataclass
 class NoExpr(Expresion):
@@ -556,7 +562,7 @@ class NoExpr(Expresion):
         return resultado
 
     def Tipo(self, Ambito):
-        self.cast = Ambito.find_simbol(self.nombre)
+        pass
 
 
 @dataclass
