@@ -200,6 +200,10 @@ class LlamadaMetodo(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f''
+        return resultado
+
     def Tipo(self, Ambito):
         self.cuerpo.Tipo(Ambito)
         formales, tipo = Ambito.get_method(self.cuerpo.cast, self.nombre_metodo)
@@ -226,6 +230,14 @@ class Condicional(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado += f'{(n) * " "} if {self.condicion} :\n'
+        resultado += f'\t {self.verdadero} \n'
+        resultado += f'else: \n'
+        resultado += f'\t {self.falso}'
+        resultado += '\n'
+        return resultado
+
     def Tipo(self, Ambito):
         self.condicion.Tipo(Ambito)
         self.verdadero.Tipo(Ambito)
@@ -248,6 +260,12 @@ class Bucle(Expresion):
         resultado += self.condicion.str(n+2)
         resultado += self.cuerpo.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
+        return resultado
+
+    def Codigo(self, n):
+        resultado += f'{(n) * " "} while {self.condicion} :\n'
+        resultado += '\t'.join([c.str(n+2) for c in self.cuerpo])
+        resultado += '\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -376,6 +394,10 @@ class Suma(OperacionBinaria):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f'{(n)*" "}{self.izquierda} + {self.derecha}\n'
+        return resultado
+
     def Tipo(self, Ambito):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
@@ -395,6 +417,10 @@ class Resta(OperacionBinaria):
         resultado += self.izquierda.str(n+2)
         resultado += self.derecha.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
+        return resultado
+
+    def Codigo(self, n):
+        resultado = f'{(n)*" "}{self.izquierda} - {self.derecha}\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -418,6 +444,10 @@ class Multiplicacion(OperacionBinaria):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f'{(n)*" "}{self.izquierda} * {self.derecha}\n'
+        return resultado
+
     def Tipo(self, Ambito):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
@@ -437,6 +467,10 @@ class Division(OperacionBinaria):
         resultado += self.izquierda.str(n+2)
         resultado += self.derecha.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
+        return resultado
+
+    def Codigo(self, n):
+        resultado = f'{(n)*" "}{self.izquierda} / {self.derecha}\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -460,6 +494,10 @@ class Menor(OperacionBinaria):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f'{(n)*" "}{self.izquierda} < {self.derecha}\n'
+        return resultado
+
     def Tipo(self, Ambito):
         self.izquierda.Tipo(Ambito)
         self.derecha.Tipo(Ambito)
@@ -478,6 +516,10 @@ class LeIgual(OperacionBinaria):
         resultado += self.izquierda.str(n+2)
         resultado += self.derecha.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
+        return resultado
+
+    def Codigo(self, n):
+        resultado = f'{(n)*" "}{self.izquierda} <= {self.derecha}\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -501,6 +543,9 @@ class Igual(OperacionBinaria):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f'{(n)*" "}{self.izquierda} == {self.derecha}\n'
+        return resultado
 
     def Tipo(self, Ambito):
         self.izquierda.Tipo(Ambito)
@@ -691,8 +736,6 @@ class Clase(Nodo):
         resultado += f'{(n+2)*" "})\n'
         return resultado
 
-    #TODO practica 4, es ir haciendo esto y se pone con es en python
-    #TODO es como ir traduciendo
     def codigo(self, n):
         resultado += f'{(n) * " "} class {self.nombre}({self.padre}):\n'
         resultado += '\t'.join([c.str(n+2) for c in self.caracteristicas])
