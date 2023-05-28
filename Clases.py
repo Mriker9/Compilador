@@ -2,6 +2,7 @@
 from dataclasses import dataclass, field
 from typing import List
 
+
 class Ambito:
     stack = [dict()]
     lista_pdr = dict({'Int': 'Object', 'String': 'Object', 'Bool': 'Object', 'IO': 'Object', 'Object': 'Object'})
@@ -140,6 +141,10 @@ class Asignacion(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f'{(n) * " "}{self.nombre} = {self.cuerpo} :\n'
+        return resultado
+
     def Tipo(self, Ambito):
         self.cuerpo.Tipo(Ambito)
 
@@ -167,6 +172,10 @@ class LlamadaMetodoEstatico(Expresion):
         resultado += ''.join([c.str(n+2) for c in self.argumentos])
         resultado += f'{(n+2)*" "})\n'
         resultado += f'{(n)*" "}: _no_type\n'
+        return resultado
+
+    def Codigo(self, n):
+        resultado = f'{(n)*" "} {self.clase}.{self.nombre_metodo}({"".join([c.str(n+2) for c in self.argumentos])})\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -200,8 +209,8 @@ class LlamadaMetodo(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
-    def Codigo(self, n):
-        resultado = f''
+    def codigo(self, n):
+        resultado = f'{(n) * " "} {self.nombre}({"".join([c.str(n+2) for c in self.argumentos])})\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -232,7 +241,7 @@ class Condicional(Expresion):
 
     def Codigo(self, n):
         resultado += f'{(n) * " "} if {self.condicion} :\n'
-        resultado += f'\t {self.verdadero} \n'
+        resultado += f' {self.verdadero.Codigo(n + 1)} \n'
         resultado += f'else: \n'
         resultado += f'\t {self.falso}'
         resultado += '\n'
@@ -290,6 +299,11 @@ class Let(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f'{n*" "} def let():\n'
+        resultado += f'{(n+2)*" "} {self.nombre} = {self.inicializacion}\n'
+        return resultado
+
     def Tipo(self, Ambito):
         Ambito.new_scope()
         Ambito.add_simbol(self.nombre, self.tipo)
@@ -314,6 +328,12 @@ class Bloque(Expresion):
         resultado += '\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = ''
+        for expr in self.expresiones:
+            resultado += f'{expr.Codigo(n)}\n'
+        return resultado
+
     def Tipo(self, Ambito):
         for expr in self.expresiones:
             expr.Tipo(Ambito)
@@ -336,6 +356,9 @@ class RamaCase(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        pass
+
     def Tipo(self, Ambito):
         self.cuerpo.Tipo(Ambito)
         self.cast = self.cuerpo.cast
@@ -353,6 +376,11 @@ class Swicht(Expresion):
         resultado += ''.join([c.str(n+2) for c in self.casos])
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
+
+    def Codigo(self, n):
+        for c in self.casos:
+            resultado = f'{(n)*" "} if isitance(temp, {c.Tipo}):\n'
+            resultado += f'{(n)*" "} {c.nombre_variable} = temp'
 
     def Tipo(self, Ambito):
         self.casos[0].Tipo(Ambito)
@@ -372,6 +400,10 @@ class Nueva(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f'{self.tipo}'
+        return resultado
+
     def Tipo(self, Ambito):
         self.cast = self.tipo
 
@@ -381,6 +413,11 @@ class OperacionBinaria(Expresion):
     izquierda: Expresion = None
     derecha: Expresion = None
 
+    def Codigo(self, n):
+        resultado = f'{(n)*" "}{self.izquierda.Codigo(0)}\n'
+        resultado += f'{(n)*" "}tem1=temp\n'
+        resultado += f'{(n)*" "}{self.derecha.Codigo(0)}\n'
+        resultado += f'{(n)*" "}temp=temp1{self.operando}temp\n'
 
 @dataclass
 class Suma(OperacionBinaria):
@@ -395,7 +432,7 @@ class Suma(OperacionBinaria):
         return resultado
 
     def Codigo(self, n):
-        resultado = f'{(n)*" "}{self.izquierda} + {self.derecha}\n'
+        resultado = f'{(n)*" "}{self.izquierda.Codigo(n)} + {self.derecha.Codigo(n)}\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -420,7 +457,7 @@ class Resta(OperacionBinaria):
         return resultado
 
     def Codigo(self, n):
-        resultado = f'{(n)*" "}{self.izquierda} - {self.derecha}\n'
+        resultado = f'{(n)*" "}{self.izquierda.Codigo(n)} - {self.derecha.Codigo(n)}\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -445,7 +482,7 @@ class Multiplicacion(OperacionBinaria):
         return resultado
 
     def Codigo(self, n):
-        resultado = f'{(n)*" "}{self.izquierda} * {self.derecha}\n'
+        resultado = f'{(n)*" "}{self.izquierda.Codigo(n)} * {self.derecha.Codigo(n)}\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -470,7 +507,7 @@ class Division(OperacionBinaria):
         return resultado
 
     def Codigo(self, n):
-        resultado = f'{(n)*" "}{self.izquierda} / {self.derecha}\n'
+        resultado = f'{(n)*" "}{self.izquierda.Codigo(n)} / {self.derecha.Codigo(n)}\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -495,7 +532,7 @@ class Menor(OperacionBinaria):
         return resultado
 
     def Codigo(self, n):
-        resultado = f'{(n)*" "}{self.izquierda} < {self.derecha}\n'
+        resultado = f'{(n)*" "}{self.izquierda.Codigo(n)} < {self.derecha.Codigo(n)}\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -519,7 +556,7 @@ class LeIgual(OperacionBinaria):
         return resultado
 
     def Codigo(self, n):
-        resultado = f'{(n)*" "}{self.izquierda} <= {self.derecha}\n'
+        resultado = f'{(n)*" "}{self.izquierda.Codigo(n)} <= {self.derecha.Codigo(n)}\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -544,7 +581,7 @@ class Igual(OperacionBinaria):
         return resultado
 
     def Codigo(self, n):
-        resultado = f'{(n)*" "}{self.izquierda} == {self.derecha}\n'
+        resultado = f'{(n)*" "}{self.izquierda.Codigo(n)} == {self.derecha.Codigo(n)}\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -567,6 +604,10 @@ class Neg(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f'-{self.expr}'
+        return resultado
+
     def Tipo(self, Ambito):
         self.expr.Tipo(Ambito)
         self.cast = self.expr.cast
@@ -582,6 +623,10 @@ class Not(Expresion):
         resultado += f'{(n)*" "}_comp\n'
         resultado += self.expr.str(n+2)
         resultado += f'{(n)*" "}: {self.cast}\n'
+        return resultado
+
+    def Codigo(self, n):
+        resultado = f'not {self.expr}'
         return resultado
 
     def Tipo(self, Ambito):
@@ -615,11 +660,13 @@ class Objeto(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f'{self.nombre}'
+        return resultado
+
     def Tipo(self, Ambito):
         if Ambito.find_simbol(self.nombre):
             self.cast = Ambito.find_simbol(self.nombre)
-        elif True: #TODO
-            raise Exception(f'{self.linea}: Undeclared identifier ' + self.nombre + '.')
         else:
             raise Exception(f'{self.linea + 1}: Undeclared identifier ' + self.nombre + '.')
 
@@ -631,6 +678,10 @@ class NoExpr(Expresion):
         resultado = super().str(n)
         resultado += f'{(n)*" "}_no_expr\n'
         resultado += f'{(n)*" "}: {self.cast}\n'
+        return resultado
+
+    def Codigo(self, n):
+        resultado = f'{self.nombre}'
         return resultado
 
     def Tipo(self, Ambito):
@@ -648,6 +699,10 @@ class Entero(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f'{self.valor}'
+        return resultado
+
     def Tipo(self, Ambito):
         self.cast = "Int"
 
@@ -661,6 +716,10 @@ class String(Expresion):
         resultado += f'{(n)*" "}_string\n'
         resultado += f'{(n+2)*" "}{self.valor}\n'
         resultado += f'{(n)*" "}: {self.cast}\n'
+        return resultado
+
+    def Codigo(self, n):
+        resultado = f'{self.valor}'
         return resultado
 
     def Tipo(self, Ambito):
@@ -677,6 +736,10 @@ class Booleano(Expresion):
         resultado += f'{(n)*" "}: {self.cast}\n'
         return resultado
 
+    def Codigo(self, n):
+        resultado = f'{self.valor}'
+        return resultado
+
     def Tipo(self, Ambito):
         self.cast = "Bool"
 
@@ -689,6 +752,10 @@ class Programa(IterableNodo):
         resultado = super().str(n)
         resultado += f'{" "*n}_program\n'
         resultado += ''.join([c.str(n+2) for c in self.secuencia])
+        return resultado
+
+    def Codigo(self, n):
+        resultado = ''.join([c.str(n+2) for c in self.secuencia.Codigo])
         return resultado
 
     def Tipo(self):
@@ -736,11 +803,10 @@ class Clase(Nodo):
         resultado += f'{(n+2)*" "})\n'
         return resultado
 
-    def codigo(self, n):
+    def Codigo(self, n):
         resultado += f'{(n) * " "} class {self.nombre}({self.padre}):\n'
-        resultado += '\t'.join([c.str(n+2) for c in self.caracteristicas])
+        resultado += f'{(n) * " "}'.join([c.str(n+2) for c in self.caracteristicas])
         resultado += '\n'
-        #resultado += f'{(n+2)*" "})\n'
         return resultado
 
     def Tipo(self, Ambito):
@@ -766,13 +832,10 @@ class Metodo(Caracteristica):
         resultado += self.cuerpo.str(n+2)
         return resultado
 
-    '''
-    def codigo(self, n):
-        resultado += f'{(n) * " "} def {self.nombre}({[c.str(n) for c in self.formales]}):\n'
-        resultado += self.cuerpo.str(n+1)
-        resultado += '\n'
+    def Codigo(self, n):
+        resultado += f'{(n) * " "} def {self.nombre}({[c.str(n) for c in self.formales.Tipo(n)]}):\n'
+        resultado += f'{(n) * " "} {self.cuerpo.Codigo}'
         return resultado
-    '''
 
     def Tipo(self, Ambito):
         Ambito.new_scope()
