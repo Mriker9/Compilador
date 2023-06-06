@@ -414,8 +414,9 @@ class OperacionBinaria(Expresion):
     derecha: Expresion = None
 
     def Codigo(self, n):
-        resultado = f'{(n)*" "}{self.izquierda.Codigo(0)}\n'
-        resultado += f'{(n)*" "}tem1=temp\n'
+        resultado = f'{(n)*" "}temp = {self.izquierda.Codigo(0)}'
+        resultado += f'{(n)*" "}{self.izquierda.Codigo(0)}\n'
+        resultado += f'{(n)*" "}temp1=temp\n'
         resultado += f'{(n)*" "}{self.derecha.Codigo(0)}\n'
         resultado += f'{(n)*" "}temp=temp1{self.operando}temp\n'
 
